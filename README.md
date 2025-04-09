@@ -1,4 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TaskMaster Startup Idea Validation Platform
+
+This project combines a Python FastAPI backend with a Next.js 15 frontend to analyze and validate startup ideas using local AI through Ollama.
+
+## Project Structure
+
+```
+/
+├── app/                     # Next.js frontend (App Router)
+│   ├── components/          # Reusable UI components
+│   ├── dashboard/           # Dashboard routes
+│   │   └── results/         # Analysis results page
+│   ├── submit-idea/         # Idea submission form
+│   └── ...
+├── backend/                 # FastAPI backend
+│   ├── main.py              # FastAPI application 
+│   ├── requirements.txt     # Python dependencies
+│   └── README.md            # Backend-specific instructions
+└── ...
+```
+
+## Prerequisites
+
+- Node.js 18+ and npm/yarn
+- Python 3.8+
+- [Ollama](https://ollama.ai/) with Mistral model installed
+- PostgreSQL database
+
+## Setup and Running
+
+### 1. FastAPI Backend
+
+Navigate to the backend directory and set up the Python environment:
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Make sure Ollama is running with the Mistral model:
+
+```bash
+ollama run mistral
+```
+
+Start the FastAPI server:
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+The API will be available at http://localhost:8000.
+
+### 2. Next.js Frontend
+
+From the project root, install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+The application will be available at http://localhost:3000.
+
+## Usage Flow
+
+1. Register/login to the platform
+2. Navigate to the dashboard
+3. Click "Submit New Idea" 
+4. Fill out the startup idea form with:
+   - Title
+   - Problem description
+   - Solution
+   - Target audience
+   - Business model
+5. Submit the form
+6. View the detailed AI analysis with:
+   - Overall score
+   - Market potential score
+   - Technical feasibility score
+   - SWOT analysis
+   - MVP suggestions
+   - Business model ideas
+
+## API Endpoints
+
+### POST /validate
+
+Evaluates a startup idea and returns a detailed analysis.
+
+**Request:**
+```json
+{
+  "title": "Your Startup Idea",
+  "problem": "Problem description",
+  "solution": "Solution description",
+  "audience": "Target audience",
+  "businessModel": "Business model approach"
+}
+```
+
+**Response:**
+```json
+{
+  "score": {
+    "overall": 85,
+    "marketPotential": 90,
+    "technicalFeasibility": 80
+  },
+  "swotAnalysis": {
+    "strengths": ["..."],
+    "weaknesses": ["..."],
+    "opportunities": ["..."],
+    "threats": ["..."]
+  },
+  "mvpSuggestions": ["..."],
+  "businessModelIdeas": ["..."]
+}
+```
+
+## Technology Stack
+
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS, React
+- **Backend**: FastAPI, Python
+- **AI**: Ollama (Mistral model)
+- **Authentication**: NextAuth.js
+- **Database**: PostgreSQL with Prisma ORM
 
 ## Getting Started
 

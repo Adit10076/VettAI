@@ -5,9 +5,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthLayout from "../auth-layout";
 import GoogleButton from "../components/GoogleButton";
-
 import { signIn } from "next-auth/react";
 import { registerUserAction } from "../lib/actions";
+import Loader from "../components/Loader";
 
 export default function Signup() {
   const router = useRouter();
@@ -170,7 +170,12 @@ export default function Signup() {
             className="auth-button mt-6 mb-4"
             disabled={isLoading}
           >
-            {isLoading ? "Creating Account..." : "Sign Up"}
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <Loader size="sm" color="white" />
+                <span className="ml-2">Creating Account...</span>
+              </div>
+            ) : "Sign Up"}
           </button>
         </form>
         

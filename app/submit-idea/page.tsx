@@ -1,209 +1,247 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { ArrowLeft, Send } from "lucide-react";
 import Logo from "../components/Logo";
+import Loader from "../components/Loader";
+
+interface StartupIdea {
+  title: string;
+  problem: string;
+  solution: string;
+  audience: string;
+  businessModel: string;
+}
 
 export default function SubmitIdea() {
-  const router = useRouter();
   const { data: session, status } = useSession();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  
+  const [formData, setFormData] = useState<StartupIdea>({
     title: "",
     problem: "",
     solution: "",
-    targetAudience: "",
-    businessModel: "saas"
+    audience: "",
+    businessModel: ""
   });
 
-  // Check authentication
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
-
-  // Show loading while checking auth status
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-emerald-500 animate-pulse">Loading...</div>
-      </div>
-    );
-  }
-
-  // Don't render form for unauthenticated users
-  if (status !== "authenticated") {
-    return null;
-  }
-
-  const businessModelOptions = [
-    { value: "saas", label: "Software as a Service (SaaS)" },
-    { value: "subscription", label: "Subscription" },
-    { value: "marketplace", label: "Marketplace" },
-    { value: "ecommerce", label: "E-commerce" },
-    { value: "freemium", label: "Freemium" },
-    { value: "advertising", label: "Advertising" },
-    { value: "hardware", label: "Hardware/Device" },
-    { value: "other", label: "Other" }
-  ];
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsLoading(true);
+    setFormError(null);
     
     try {
-      // In a real app, you would send this data to your API
-      // For now, we'll just simulate a submission and redirect
-      console.log("Form data:", formData);
+      // First, get analysis from backend API
+      const response = await fetch("http://localhost:8000/validate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
       
-      // Redirect to results page
+      const analysisData = await response.json();
+      
+      // Store result in sessionStorage to access it on the results page
+      sessionStorage.setItem("startupAnalysis", JSON.stringify(analysisData));
+      sessionStorage.setItem("startupIdea", JSON.stringify(formData));
+      
+      // Save to database
+      const saveResponse = await fetch("/api/startup-ideas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idea: formData,
+          analysis: analysisData
+        }),
+      });
+      
+      if (!saveResponse.ok) {
+        console.error("Failed to save to database, but continuing...");
+      } else {
+        const saveData = await saveResponse.json();
+        // Store idea ID for reference
+        sessionStorage.setItem("currentIdeaId", saveData.id);
+      }
+      
+      // Navigate to results page
       router.push("/dashboard/results");
     } catch (error) {
-      console.error("Error submitting idea:", error);
-      // Handle error here
+      console.error("Submission error:", error);
+      setFormError("Failed to analyze your startup idea. Please check if the backend server is running.");
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
+  // Auth check
+  if (status === "loading") {
+    return <Loader fullPage text="Loading your session..." />;
+  }
+
+  if (status === "unauthenticated") {
+    router.push("/login");
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Navigation */}
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <Link href="/dashboard">
-            <Logo size="md" animated={false} />
-          </Link>
+      <header className="bg-gray-800 shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <div className="flex items-center">
+            <Link href="/dashboard">
+              <Logo size="md" animated={false} />
+            </Link>
+            <span className="ml-4 text-xl font-semibold text-gray-300">
+              Submit New Idea
+            </span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="text-gray-300">
+              {session?.user?.name || session?.user?.email}
+            </div>
+            <Link href="/dashboard" className="flex items-center text-gray-300 hover:text-white">
+              <ArrowLeft size={16} className="mr-1" />
+              Dashboard
+            </Link>
+          </div>
         </div>
-        <div>
-          <Link href="/dashboard" className="text-gray-300 hover:text-white px-3 py-2">
-            Back to Dashboard
-          </Link>
-        </div>
-      </nav>
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-gray-800 rounded-xl p-8 shadow-lg">
-          <h1 className="text-2xl font-bold mb-6">Tell us about your startup idea</h1>
-          <p className="text-gray-300 mb-8">
-            Fill out the form below to get AI-powered insights about your business concept.
-          </p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-6">
-              {/* Startup Idea Title */}
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-1">
-                  Startup Idea Title *
-                </label>
-                <input
-                  id="title"
-                  name="title"
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="E.g., AI-Powered Resume Builder"
-                />
-              </div>
-
-              {/* Problem Description */}
-              <div>
-                <label htmlFor="problem" className="block text-sm font-medium text-gray-300 mb-1">
-                  Problem Description *
-                </label>
-                <textarea
-                  id="problem"
-                  name="problem"
-                  required
-                  value={formData.problem}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="What problem are you trying to solve? Who experiences this problem?"
-                />
-              </div>
-
-              {/* Your Solution */}
-              <div>
-                <label htmlFor="solution" className="block text-sm font-medium text-gray-300 mb-1">
-                  Your Solution *
-                </label>
-                <textarea
-                  id="solution"
-                  name="solution"
-                  required
-                  value={formData.solution}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="How does your product or service solve the problem?"
-                />
-              </div>
-
-              {/* Target Audience */}
-              <div>
-                <label htmlFor="targetAudience" className="block text-sm font-medium text-gray-300 mb-1">
-                  Target Audience *
-                </label>
-                <textarea
-                  id="targetAudience"
-                  name="targetAudience"
-                  required
-                  value={formData.targetAudience}
-                  onChange={handleChange}
-                  rows={2}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Who will use your product? Define your target market."
-                />
-              </div>
-
-              {/* Business Model */}
-              <div>
-                <label htmlFor="businessModel" className="block text-sm font-medium text-gray-300 mb-1">
-                  Business Model *
-                </label>
-                <select
-                  id="businessModel"
-                  name="businessModel"
-                  required
-                  value={formData.businessModel}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                >
-                  {businessModelOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="pt-4">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 px-6 rounded-lg font-medium transition duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? "Analyzing..." : "Submit Idea"}
-                </button>
-              </div>
+      </header>
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-gray-800 rounded-xl shadow-md p-6 md:p-8 mb-8">
+          <h1 className="text-2xl font-bold mb-6">Let's Analyze Your Startup Idea</h1>
+          
+          {formError && (
+            <div className="bg-red-900/30 border border-red-400 text-red-200 px-4 py-3 rounded-lg mb-6">
+              {formError}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-2">
+                Startup Name/Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                required
+                value={formData.title}
+                onChange={handleChange}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="e.g., TaskMaster - AI-powered task management"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="problem" className="block text-sm font-medium text-gray-300 mb-2">
+                Problem You're Solving
+              </label>
+              <textarea
+                id="problem"
+                name="problem"
+                required
+                value={formData.problem}
+                onChange={handleChange}
+                rows={3}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Describe the problem your startup addresses..."
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="solution" className="block text-sm font-medium text-gray-300 mb-2">
+                Your Solution
+              </label>
+              <textarea
+                id="solution"
+                name="solution"
+                required
+                value={formData.solution}
+                onChange={handleChange}
+                rows={3}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Explain how your product/service solves the problem..."
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="audience" className="block text-sm font-medium text-gray-300 mb-2">
+                Target Audience
+              </label>
+              <textarea
+                id="audience"
+                name="audience"
+                required
+                value={formData.audience}
+                onChange={handleChange}
+                rows={2}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Who are your primary users/customers..."
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="businessModel" className="block text-sm font-medium text-gray-300 mb-2">
+                Business Model
+              </label>
+              <textarea
+                id="businessModel"
+                name="businessModel"
+                required
+                value={formData.businessModel}
+                onChange={handleChange}
+                rows={2}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="How will you generate revenue..."
+              />
+            </div>
+            
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center ${
+                  isLoading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <Loader size="sm" color="white" />
+                    <span className="ml-2">Analyzing...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Send size={18} className="mr-2" />
+                    Analyze Idea
+                  </>
+                )}
+              </button>
             </div>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 } 

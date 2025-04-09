@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Logo from "../components/Logo";
 import { PlusCircle, BarChart4, Target, Briefcase } from "lucide-react";
+import RecentStartupIdeas from "../components/RecentStartupIdeas";
+import Loader from "../components/Loader";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -30,11 +32,7 @@ export default function Dashboard() {
   }, [status, router, session]);
 
   if (isLoading || status === "loading") {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-emerald-500">Loading...</div>
-      </div>
-    );
+    return <Loader fullPage text="Loading dashboard..." />;
   }
 
   // Only render dashboard if authenticated
@@ -87,21 +85,12 @@ export default function Dashboard() {
         <div className="mb-10">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Recent Analyses</h2>
-            <Link href="/dashboard/results" className="text-emerald-400 hover:text-emerald-300 text-sm">
+            <Link href="/dashboard/all-ideas" className="text-emerald-400 hover:text-emerald-300 text-sm">
               View all
             </Link>
           </div>
           
-          <div className="bg-gray-800 rounded-xl p-6 shadow-md text-center">
-            <p className="text-gray-400">You haven't submitted any ideas yet.</p>
-            <Link 
-              href="/submit-idea" 
-              className="text-emerald-400 hover:underline inline-flex items-center mt-2"
-            >
-              <PlusCircle size={16} className="mr-1" />
-              Submit your first idea
-            </Link>
-          </div>
+          <RecentStartupIdeas />
         </div>
         
         {/* Tools & Features */}
@@ -121,7 +110,7 @@ export default function Dashboard() {
               </div>
             </Link>
             
-            <Link href="/dashboard/results" className="bg-gray-800 rounded-lg p-5 hover:bg-gray-700 transition group">
+            <Link href="/dashboard/all-ideas" className="bg-gray-800 rounded-lg p-5 hover:bg-gray-700 transition group">
               <div className="flex items-start">
                 <div className="p-2 bg-emerald-900/30 rounded-lg mr-4">
                   <BarChart4 size={24} className="text-emerald-400" />

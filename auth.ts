@@ -46,7 +46,7 @@ export const {
 
         try {
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
+            where: { email: credentials.email as string },
           });
 
           console.log("User found:", user ? { id: user.id, hasPassword: !!user.hashedPassword } : "not found");
@@ -57,7 +57,7 @@ export const {
             return null;
           }
 
-          const passwordMatch = await compare(credentials.password, user.hashedPassword);
+          const passwordMatch = await compare(credentials.password as string, user.hashedPassword);
           console.log("Password match:", passwordMatch);
 
           if (!passwordMatch) {
@@ -148,9 +148,9 @@ export const {
                   access_token: account.access_token,
                   expires_at: account.expires_at,
                   token_type: account.token_type,
-                  scope: account.scope,
-                  id_token: account.id_token,
-                  session_state: account.session_state
+                  scope: account.scope?.toString(),
+                  id_token: account.id_token?.toString(),
+                  session_state: account.session_state?.toString()
                 }
               });
             } catch (error) {

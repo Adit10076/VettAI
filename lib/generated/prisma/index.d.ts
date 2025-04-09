@@ -28,6 +28,11 @@ export type Account = $Result.DefaultSelection<Prisma.$AccountPayload>
  * 
  */
 export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
+/**
+ * Model StartupIdea
+ * 
+ */
+export type StartupIdea = $Result.DefaultSelection<Prisma.$StartupIdeaPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -183,6 +188,16 @@ export class PrismaClient<
     * ```
     */
   get session(): Prisma.SessionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.startupIdea`: Exposes CRUD operations for the **StartupIdea** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StartupIdeas
+    * const startupIdeas = await prisma.startupIdea.findMany()
+    * ```
+    */
+  get startupIdea(): Prisma.StartupIdeaDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -625,7 +640,8 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Account: 'Account',
-    Session: 'Session'
+    Session: 'Session',
+    StartupIdea: 'StartupIdea'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -644,7 +660,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "session"
+      modelProps: "user" | "account" | "session" | "startupIdea"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -870,6 +886,80 @@ export namespace Prisma {
           }
         }
       }
+      StartupIdea: {
+        payload: Prisma.$StartupIdeaPayload<ExtArgs>
+        fields: Prisma.StartupIdeaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StartupIdeaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StartupIdeaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>
+          }
+          findFirst: {
+            args: Prisma.StartupIdeaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StartupIdeaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>
+          }
+          findMany: {
+            args: Prisma.StartupIdeaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>[]
+          }
+          create: {
+            args: Prisma.StartupIdeaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>
+          }
+          createMany: {
+            args: Prisma.StartupIdeaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.StartupIdeaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>[]
+          }
+          delete: {
+            args: Prisma.StartupIdeaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>
+          }
+          update: {
+            args: Prisma.StartupIdeaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>
+          }
+          deleteMany: {
+            args: Prisma.StartupIdeaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StartupIdeaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.StartupIdeaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>[]
+          }
+          upsert: {
+            args: Prisma.StartupIdeaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StartupIdeaPayload>
+          }
+          aggregate: {
+            args: Prisma.StartupIdeaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStartupIdea>
+          }
+          groupBy: {
+            args: Prisma.StartupIdeaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StartupIdeaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StartupIdeaCountArgs<ExtArgs>
+            result: $Utils.Optional<StartupIdeaCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -957,6 +1047,7 @@ export namespace Prisma {
     user?: UserOmit
     account?: AccountOmit
     session?: SessionOmit
+    startupIdea?: StartupIdeaOmit
   }
 
   /* Types for Logging */
@@ -1053,11 +1144,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     accounts: number
     sessions: number
+    startupIdeas: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+    startupIdeas?: boolean | UserCountOutputTypeCountStartupIdeasArgs
   }
 
   // Custom InputTypes
@@ -1083,6 +1176,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SessionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountStartupIdeasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StartupIdeaWhereInput
   }
 
 
@@ -1280,6 +1380,7 @@ export namespace Prisma {
     updatedAt?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    startupIdeas?: boolean | User$startupIdeasArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1320,6 +1421,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    startupIdeas?: boolean | User$startupIdeasArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1330,6 +1432,7 @@ export namespace Prisma {
     objects: {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
+      startupIdeas: Prisma.$StartupIdeaPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1736,6 +1839,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    startupIdeas<T extends User$startupIdeasArgs<ExtArgs> = {}>(args?: Subset<T, User$startupIdeasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2206,6 +2310,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
+   * User.startupIdeas
+   */
+  export type User$startupIdeasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    where?: StartupIdeaWhereInput
+    orderBy?: StartupIdeaOrderByWithRelationInput | StartupIdeaOrderByWithRelationInput[]
+    cursor?: StartupIdeaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StartupIdeaScalarFieldEnum | StartupIdeaScalarFieldEnum[]
   }
 
   /**
@@ -4456,6 +4584,1224 @@ export namespace Prisma {
 
 
   /**
+   * Model StartupIdea
+   */
+
+  export type AggregateStartupIdea = {
+    _count: StartupIdeaCountAggregateOutputType | null
+    _avg: StartupIdeaAvgAggregateOutputType | null
+    _sum: StartupIdeaSumAggregateOutputType | null
+    _min: StartupIdeaMinAggregateOutputType | null
+    _max: StartupIdeaMaxAggregateOutputType | null
+  }
+
+  export type StartupIdeaAvgAggregateOutputType = {
+    marketPotentialScore: number | null
+    overallScore: number | null
+    technicalFeasibilityScore: number | null
+  }
+
+  export type StartupIdeaSumAggregateOutputType = {
+    marketPotentialScore: number | null
+    overallScore: number | null
+    technicalFeasibilityScore: number | null
+  }
+
+  export type StartupIdeaMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    problem: string | null
+    solution: string | null
+    audience: string | null
+    businessModel: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    userId: string | null
+    marketPotentialScore: number | null
+    overallScore: number | null
+    technicalFeasibilityScore: number | null
+  }
+
+  export type StartupIdeaMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    problem: string | null
+    solution: string | null
+    audience: string | null
+    businessModel: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    userId: string | null
+    marketPotentialScore: number | null
+    overallScore: number | null
+    technicalFeasibilityScore: number | null
+  }
+
+  export type StartupIdeaCountAggregateOutputType = {
+    id: number
+    title: number
+    problem: number
+    solution: number
+    audience: number
+    businessModel: number
+    createdAt: number
+    updatedAt: number
+    userId: number
+    businessModelIdeas: number
+    marketPotentialScore: number
+    mvpSuggestions: number
+    overallScore: number
+    swotAnalysis: number
+    technicalFeasibilityScore: number
+    _all: number
+  }
+
+
+  export type StartupIdeaAvgAggregateInputType = {
+    marketPotentialScore?: true
+    overallScore?: true
+    technicalFeasibilityScore?: true
+  }
+
+  export type StartupIdeaSumAggregateInputType = {
+    marketPotentialScore?: true
+    overallScore?: true
+    technicalFeasibilityScore?: true
+  }
+
+  export type StartupIdeaMinAggregateInputType = {
+    id?: true
+    title?: true
+    problem?: true
+    solution?: true
+    audience?: true
+    businessModel?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    marketPotentialScore?: true
+    overallScore?: true
+    technicalFeasibilityScore?: true
+  }
+
+  export type StartupIdeaMaxAggregateInputType = {
+    id?: true
+    title?: true
+    problem?: true
+    solution?: true
+    audience?: true
+    businessModel?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    marketPotentialScore?: true
+    overallScore?: true
+    technicalFeasibilityScore?: true
+  }
+
+  export type StartupIdeaCountAggregateInputType = {
+    id?: true
+    title?: true
+    problem?: true
+    solution?: true
+    audience?: true
+    businessModel?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    businessModelIdeas?: true
+    marketPotentialScore?: true
+    mvpSuggestions?: true
+    overallScore?: true
+    swotAnalysis?: true
+    technicalFeasibilityScore?: true
+    _all?: true
+  }
+
+  export type StartupIdeaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StartupIdea to aggregate.
+     */
+    where?: StartupIdeaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StartupIdeas to fetch.
+     */
+    orderBy?: StartupIdeaOrderByWithRelationInput | StartupIdeaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StartupIdeaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StartupIdeas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StartupIdeas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned StartupIdeas
+    **/
+    _count?: true | StartupIdeaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: StartupIdeaAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: StartupIdeaSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StartupIdeaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StartupIdeaMaxAggregateInputType
+  }
+
+  export type GetStartupIdeaAggregateType<T extends StartupIdeaAggregateArgs> = {
+        [P in keyof T & keyof AggregateStartupIdea]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStartupIdea[P]>
+      : GetScalarType<T[P], AggregateStartupIdea[P]>
+  }
+
+
+
+
+  export type StartupIdeaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StartupIdeaWhereInput
+    orderBy?: StartupIdeaOrderByWithAggregationInput | StartupIdeaOrderByWithAggregationInput[]
+    by: StartupIdeaScalarFieldEnum[] | StartupIdeaScalarFieldEnum
+    having?: StartupIdeaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StartupIdeaCountAggregateInputType | true
+    _avg?: StartupIdeaAvgAggregateInputType
+    _sum?: StartupIdeaSumAggregateInputType
+    _min?: StartupIdeaMinAggregateInputType
+    _max?: StartupIdeaMaxAggregateInputType
+  }
+
+  export type StartupIdeaGroupByOutputType = {
+    id: string
+    title: string
+    problem: string
+    solution: string
+    audience: string
+    businessModel: string
+    createdAt: Date
+    updatedAt: Date
+    userId: string
+    businessModelIdeas: JsonValue
+    marketPotentialScore: number
+    mvpSuggestions: JsonValue
+    overallScore: number
+    swotAnalysis: JsonValue
+    technicalFeasibilityScore: number
+    _count: StartupIdeaCountAggregateOutputType | null
+    _avg: StartupIdeaAvgAggregateOutputType | null
+    _sum: StartupIdeaSumAggregateOutputType | null
+    _min: StartupIdeaMinAggregateOutputType | null
+    _max: StartupIdeaMaxAggregateOutputType | null
+  }
+
+  type GetStartupIdeaGroupByPayload<T extends StartupIdeaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StartupIdeaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StartupIdeaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StartupIdeaGroupByOutputType[P]>
+            : GetScalarType<T[P], StartupIdeaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StartupIdeaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    problem?: boolean
+    solution?: boolean
+    audience?: boolean
+    businessModel?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    businessModelIdeas?: boolean
+    marketPotentialScore?: boolean
+    mvpSuggestions?: boolean
+    overallScore?: boolean
+    swotAnalysis?: boolean
+    technicalFeasibilityScore?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["startupIdea"]>
+
+  export type StartupIdeaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    problem?: boolean
+    solution?: boolean
+    audience?: boolean
+    businessModel?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    businessModelIdeas?: boolean
+    marketPotentialScore?: boolean
+    mvpSuggestions?: boolean
+    overallScore?: boolean
+    swotAnalysis?: boolean
+    technicalFeasibilityScore?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["startupIdea"]>
+
+  export type StartupIdeaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    problem?: boolean
+    solution?: boolean
+    audience?: boolean
+    businessModel?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    businessModelIdeas?: boolean
+    marketPotentialScore?: boolean
+    mvpSuggestions?: boolean
+    overallScore?: boolean
+    swotAnalysis?: boolean
+    technicalFeasibilityScore?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["startupIdea"]>
+
+  export type StartupIdeaSelectScalar = {
+    id?: boolean
+    title?: boolean
+    problem?: boolean
+    solution?: boolean
+    audience?: boolean
+    businessModel?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    businessModelIdeas?: boolean
+    marketPotentialScore?: boolean
+    mvpSuggestions?: boolean
+    overallScore?: boolean
+    swotAnalysis?: boolean
+    technicalFeasibilityScore?: boolean
+  }
+
+  export type StartupIdeaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "problem" | "solution" | "audience" | "businessModel" | "createdAt" | "updatedAt" | "userId" | "businessModelIdeas" | "marketPotentialScore" | "mvpSuggestions" | "overallScore" | "swotAnalysis" | "technicalFeasibilityScore", ExtArgs["result"]["startupIdea"]>
+  export type StartupIdeaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type StartupIdeaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type StartupIdeaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $StartupIdeaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StartupIdea"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      problem: string
+      solution: string
+      audience: string
+      businessModel: string
+      createdAt: Date
+      updatedAt: Date
+      userId: string
+      businessModelIdeas: Prisma.JsonValue
+      marketPotentialScore: number
+      mvpSuggestions: Prisma.JsonValue
+      overallScore: number
+      swotAnalysis: Prisma.JsonValue
+      technicalFeasibilityScore: number
+    }, ExtArgs["result"]["startupIdea"]>
+    composites: {}
+  }
+
+  type StartupIdeaGetPayload<S extends boolean | null | undefined | StartupIdeaDefaultArgs> = $Result.GetResult<Prisma.$StartupIdeaPayload, S>
+
+  type StartupIdeaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StartupIdeaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StartupIdeaCountAggregateInputType | true
+    }
+
+  export interface StartupIdeaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StartupIdea'], meta: { name: 'StartupIdea' } }
+    /**
+     * Find zero or one StartupIdea that matches the filter.
+     * @param {StartupIdeaFindUniqueArgs} args - Arguments to find a StartupIdea
+     * @example
+     * // Get one StartupIdea
+     * const startupIdea = await prisma.startupIdea.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StartupIdeaFindUniqueArgs>(args: SelectSubset<T, StartupIdeaFindUniqueArgs<ExtArgs>>): Prisma__StartupIdeaClient<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one StartupIdea that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {StartupIdeaFindUniqueOrThrowArgs} args - Arguments to find a StartupIdea
+     * @example
+     * // Get one StartupIdea
+     * const startupIdea = await prisma.startupIdea.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StartupIdeaFindUniqueOrThrowArgs>(args: SelectSubset<T, StartupIdeaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StartupIdeaClient<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StartupIdea that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StartupIdeaFindFirstArgs} args - Arguments to find a StartupIdea
+     * @example
+     * // Get one StartupIdea
+     * const startupIdea = await prisma.startupIdea.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StartupIdeaFindFirstArgs>(args?: SelectSubset<T, StartupIdeaFindFirstArgs<ExtArgs>>): Prisma__StartupIdeaClient<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StartupIdea that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StartupIdeaFindFirstOrThrowArgs} args - Arguments to find a StartupIdea
+     * @example
+     * // Get one StartupIdea
+     * const startupIdea = await prisma.startupIdea.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StartupIdeaFindFirstOrThrowArgs>(args?: SelectSubset<T, StartupIdeaFindFirstOrThrowArgs<ExtArgs>>): Prisma__StartupIdeaClient<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more StartupIdeas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StartupIdeaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StartupIdeas
+     * const startupIdeas = await prisma.startupIdea.findMany()
+     * 
+     * // Get first 10 StartupIdeas
+     * const startupIdeas = await prisma.startupIdea.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const startupIdeaWithIdOnly = await prisma.startupIdea.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StartupIdeaFindManyArgs>(args?: SelectSubset<T, StartupIdeaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a StartupIdea.
+     * @param {StartupIdeaCreateArgs} args - Arguments to create a StartupIdea.
+     * @example
+     * // Create one StartupIdea
+     * const StartupIdea = await prisma.startupIdea.create({
+     *   data: {
+     *     // ... data to create a StartupIdea
+     *   }
+     * })
+     * 
+     */
+    create<T extends StartupIdeaCreateArgs>(args: SelectSubset<T, StartupIdeaCreateArgs<ExtArgs>>): Prisma__StartupIdeaClient<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many StartupIdeas.
+     * @param {StartupIdeaCreateManyArgs} args - Arguments to create many StartupIdeas.
+     * @example
+     * // Create many StartupIdeas
+     * const startupIdea = await prisma.startupIdea.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StartupIdeaCreateManyArgs>(args?: SelectSubset<T, StartupIdeaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many StartupIdeas and returns the data saved in the database.
+     * @param {StartupIdeaCreateManyAndReturnArgs} args - Arguments to create many StartupIdeas.
+     * @example
+     * // Create many StartupIdeas
+     * const startupIdea = await prisma.startupIdea.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many StartupIdeas and only return the `id`
+     * const startupIdeaWithIdOnly = await prisma.startupIdea.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends StartupIdeaCreateManyAndReturnArgs>(args?: SelectSubset<T, StartupIdeaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a StartupIdea.
+     * @param {StartupIdeaDeleteArgs} args - Arguments to delete one StartupIdea.
+     * @example
+     * // Delete one StartupIdea
+     * const StartupIdea = await prisma.startupIdea.delete({
+     *   where: {
+     *     // ... filter to delete one StartupIdea
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StartupIdeaDeleteArgs>(args: SelectSubset<T, StartupIdeaDeleteArgs<ExtArgs>>): Prisma__StartupIdeaClient<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one StartupIdea.
+     * @param {StartupIdeaUpdateArgs} args - Arguments to update one StartupIdea.
+     * @example
+     * // Update one StartupIdea
+     * const startupIdea = await prisma.startupIdea.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StartupIdeaUpdateArgs>(args: SelectSubset<T, StartupIdeaUpdateArgs<ExtArgs>>): Prisma__StartupIdeaClient<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more StartupIdeas.
+     * @param {StartupIdeaDeleteManyArgs} args - Arguments to filter StartupIdeas to delete.
+     * @example
+     * // Delete a few StartupIdeas
+     * const { count } = await prisma.startupIdea.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StartupIdeaDeleteManyArgs>(args?: SelectSubset<T, StartupIdeaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StartupIdeas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StartupIdeaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StartupIdeas
+     * const startupIdea = await prisma.startupIdea.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StartupIdeaUpdateManyArgs>(args: SelectSubset<T, StartupIdeaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StartupIdeas and returns the data updated in the database.
+     * @param {StartupIdeaUpdateManyAndReturnArgs} args - Arguments to update many StartupIdeas.
+     * @example
+     * // Update many StartupIdeas
+     * const startupIdea = await prisma.startupIdea.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more StartupIdeas and only return the `id`
+     * const startupIdeaWithIdOnly = await prisma.startupIdea.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends StartupIdeaUpdateManyAndReturnArgs>(args: SelectSubset<T, StartupIdeaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one StartupIdea.
+     * @param {StartupIdeaUpsertArgs} args - Arguments to update or create a StartupIdea.
+     * @example
+     * // Update or create a StartupIdea
+     * const startupIdea = await prisma.startupIdea.upsert({
+     *   create: {
+     *     // ... data to create a StartupIdea
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StartupIdea we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StartupIdeaUpsertArgs>(args: SelectSubset<T, StartupIdeaUpsertArgs<ExtArgs>>): Prisma__StartupIdeaClient<$Result.GetResult<Prisma.$StartupIdeaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of StartupIdeas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StartupIdeaCountArgs} args - Arguments to filter StartupIdeas to count.
+     * @example
+     * // Count the number of StartupIdeas
+     * const count = await prisma.startupIdea.count({
+     *   where: {
+     *     // ... the filter for the StartupIdeas we want to count
+     *   }
+     * })
+    **/
+    count<T extends StartupIdeaCountArgs>(
+      args?: Subset<T, StartupIdeaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StartupIdeaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StartupIdea.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StartupIdeaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StartupIdeaAggregateArgs>(args: Subset<T, StartupIdeaAggregateArgs>): Prisma.PrismaPromise<GetStartupIdeaAggregateType<T>>
+
+    /**
+     * Group by StartupIdea.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StartupIdeaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StartupIdeaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StartupIdeaGroupByArgs['orderBy'] }
+        : { orderBy?: StartupIdeaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StartupIdeaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStartupIdeaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StartupIdea model
+   */
+  readonly fields: StartupIdeaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StartupIdea.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StartupIdeaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StartupIdea model
+   */
+  interface StartupIdeaFieldRefs {
+    readonly id: FieldRef<"StartupIdea", 'String'>
+    readonly title: FieldRef<"StartupIdea", 'String'>
+    readonly problem: FieldRef<"StartupIdea", 'String'>
+    readonly solution: FieldRef<"StartupIdea", 'String'>
+    readonly audience: FieldRef<"StartupIdea", 'String'>
+    readonly businessModel: FieldRef<"StartupIdea", 'String'>
+    readonly createdAt: FieldRef<"StartupIdea", 'DateTime'>
+    readonly updatedAt: FieldRef<"StartupIdea", 'DateTime'>
+    readonly userId: FieldRef<"StartupIdea", 'String'>
+    readonly businessModelIdeas: FieldRef<"StartupIdea", 'Json'>
+    readonly marketPotentialScore: FieldRef<"StartupIdea", 'Int'>
+    readonly mvpSuggestions: FieldRef<"StartupIdea", 'Json'>
+    readonly overallScore: FieldRef<"StartupIdea", 'Int'>
+    readonly swotAnalysis: FieldRef<"StartupIdea", 'Json'>
+    readonly technicalFeasibilityScore: FieldRef<"StartupIdea", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StartupIdea findUnique
+   */
+  export type StartupIdeaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * Filter, which StartupIdea to fetch.
+     */
+    where: StartupIdeaWhereUniqueInput
+  }
+
+  /**
+   * StartupIdea findUniqueOrThrow
+   */
+  export type StartupIdeaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * Filter, which StartupIdea to fetch.
+     */
+    where: StartupIdeaWhereUniqueInput
+  }
+
+  /**
+   * StartupIdea findFirst
+   */
+  export type StartupIdeaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * Filter, which StartupIdea to fetch.
+     */
+    where?: StartupIdeaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StartupIdeas to fetch.
+     */
+    orderBy?: StartupIdeaOrderByWithRelationInput | StartupIdeaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StartupIdeas.
+     */
+    cursor?: StartupIdeaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StartupIdeas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StartupIdeas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StartupIdeas.
+     */
+    distinct?: StartupIdeaScalarFieldEnum | StartupIdeaScalarFieldEnum[]
+  }
+
+  /**
+   * StartupIdea findFirstOrThrow
+   */
+  export type StartupIdeaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * Filter, which StartupIdea to fetch.
+     */
+    where?: StartupIdeaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StartupIdeas to fetch.
+     */
+    orderBy?: StartupIdeaOrderByWithRelationInput | StartupIdeaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StartupIdeas.
+     */
+    cursor?: StartupIdeaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StartupIdeas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StartupIdeas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StartupIdeas.
+     */
+    distinct?: StartupIdeaScalarFieldEnum | StartupIdeaScalarFieldEnum[]
+  }
+
+  /**
+   * StartupIdea findMany
+   */
+  export type StartupIdeaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * Filter, which StartupIdeas to fetch.
+     */
+    where?: StartupIdeaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StartupIdeas to fetch.
+     */
+    orderBy?: StartupIdeaOrderByWithRelationInput | StartupIdeaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StartupIdeas.
+     */
+    cursor?: StartupIdeaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StartupIdeas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StartupIdeas.
+     */
+    skip?: number
+    distinct?: StartupIdeaScalarFieldEnum | StartupIdeaScalarFieldEnum[]
+  }
+
+  /**
+   * StartupIdea create
+   */
+  export type StartupIdeaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a StartupIdea.
+     */
+    data: XOR<StartupIdeaCreateInput, StartupIdeaUncheckedCreateInput>
+  }
+
+  /**
+   * StartupIdea createMany
+   */
+  export type StartupIdeaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StartupIdeas.
+     */
+    data: StartupIdeaCreateManyInput | StartupIdeaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * StartupIdea createManyAndReturn
+   */
+  export type StartupIdeaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * The data used to create many StartupIdeas.
+     */
+    data: StartupIdeaCreateManyInput | StartupIdeaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StartupIdea update
+   */
+  export type StartupIdeaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a StartupIdea.
+     */
+    data: XOR<StartupIdeaUpdateInput, StartupIdeaUncheckedUpdateInput>
+    /**
+     * Choose, which StartupIdea to update.
+     */
+    where: StartupIdeaWhereUniqueInput
+  }
+
+  /**
+   * StartupIdea updateMany
+   */
+  export type StartupIdeaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StartupIdeas.
+     */
+    data: XOR<StartupIdeaUpdateManyMutationInput, StartupIdeaUncheckedUpdateManyInput>
+    /**
+     * Filter which StartupIdeas to update
+     */
+    where?: StartupIdeaWhereInput
+    /**
+     * Limit how many StartupIdeas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StartupIdea updateManyAndReturn
+   */
+  export type StartupIdeaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * The data used to update StartupIdeas.
+     */
+    data: XOR<StartupIdeaUpdateManyMutationInput, StartupIdeaUncheckedUpdateManyInput>
+    /**
+     * Filter which StartupIdeas to update
+     */
+    where?: StartupIdeaWhereInput
+    /**
+     * Limit how many StartupIdeas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StartupIdea upsert
+   */
+  export type StartupIdeaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the StartupIdea to update in case it exists.
+     */
+    where: StartupIdeaWhereUniqueInput
+    /**
+     * In case the StartupIdea found by the `where` argument doesn't exist, create a new StartupIdea with this data.
+     */
+    create: XOR<StartupIdeaCreateInput, StartupIdeaUncheckedCreateInput>
+    /**
+     * In case the StartupIdea was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StartupIdeaUpdateInput, StartupIdeaUncheckedUpdateInput>
+  }
+
+  /**
+   * StartupIdea delete
+   */
+  export type StartupIdeaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+    /**
+     * Filter which StartupIdea to delete.
+     */
+    where: StartupIdeaWhereUniqueInput
+  }
+
+  /**
+   * StartupIdea deleteMany
+   */
+  export type StartupIdeaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StartupIdeas to delete
+     */
+    where?: StartupIdeaWhereInput
+    /**
+     * Limit how many StartupIdeas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * StartupIdea without action
+   */
+  export type StartupIdeaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StartupIdea
+     */
+    select?: StartupIdeaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StartupIdea
+     */
+    omit?: StartupIdeaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StartupIdeaInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -4511,12 +5857,40 @@ export namespace Prisma {
   export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
 
 
+  export const StartupIdeaScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    problem: 'problem',
+    solution: 'solution',
+    audience: 'audience',
+    businessModel: 'businessModel',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    userId: 'userId',
+    businessModelIdeas: 'businessModelIdeas',
+    marketPotentialScore: 'marketPotentialScore',
+    mvpSuggestions: 'mvpSuggestions',
+    overallScore: 'overallScore',
+    swotAnalysis: 'swotAnalysis',
+    technicalFeasibilityScore: 'technicalFeasibilityScore'
+  };
+
+  export type StartupIdeaScalarFieldEnum = (typeof StartupIdeaScalarFieldEnum)[keyof typeof StartupIdeaScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
   export const QueryMode: {
@@ -4533,6 +5907,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -4583,6 +5966,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -4613,6 +6010,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
+    startupIdeas?: StartupIdeaListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -4626,6 +6024,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
+    startupIdeas?: StartupIdeaOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -4642,6 +6041,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
+    startupIdeas?: StartupIdeaListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -4815,6 +6215,113 @@ export namespace Prisma {
     expires?: DateTimeWithAggregatesFilter<"Session"> | Date | string
   }
 
+  export type StartupIdeaWhereInput = {
+    AND?: StartupIdeaWhereInput | StartupIdeaWhereInput[]
+    OR?: StartupIdeaWhereInput[]
+    NOT?: StartupIdeaWhereInput | StartupIdeaWhereInput[]
+    id?: StringFilter<"StartupIdea"> | string
+    title?: StringFilter<"StartupIdea"> | string
+    problem?: StringFilter<"StartupIdea"> | string
+    solution?: StringFilter<"StartupIdea"> | string
+    audience?: StringFilter<"StartupIdea"> | string
+    businessModel?: StringFilter<"StartupIdea"> | string
+    createdAt?: DateTimeFilter<"StartupIdea"> | Date | string
+    updatedAt?: DateTimeFilter<"StartupIdea"> | Date | string
+    userId?: StringFilter<"StartupIdea"> | string
+    businessModelIdeas?: JsonFilter<"StartupIdea">
+    marketPotentialScore?: IntFilter<"StartupIdea"> | number
+    mvpSuggestions?: JsonFilter<"StartupIdea">
+    overallScore?: IntFilter<"StartupIdea"> | number
+    swotAnalysis?: JsonFilter<"StartupIdea">
+    technicalFeasibilityScore?: IntFilter<"StartupIdea"> | number
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type StartupIdeaOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    problem?: SortOrder
+    solution?: SortOrder
+    audience?: SortOrder
+    businessModel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    businessModelIdeas?: SortOrder
+    marketPotentialScore?: SortOrder
+    mvpSuggestions?: SortOrder
+    overallScore?: SortOrder
+    swotAnalysis?: SortOrder
+    technicalFeasibilityScore?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type StartupIdeaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StartupIdeaWhereInput | StartupIdeaWhereInput[]
+    OR?: StartupIdeaWhereInput[]
+    NOT?: StartupIdeaWhereInput | StartupIdeaWhereInput[]
+    title?: StringFilter<"StartupIdea"> | string
+    problem?: StringFilter<"StartupIdea"> | string
+    solution?: StringFilter<"StartupIdea"> | string
+    audience?: StringFilter<"StartupIdea"> | string
+    businessModel?: StringFilter<"StartupIdea"> | string
+    createdAt?: DateTimeFilter<"StartupIdea"> | Date | string
+    updatedAt?: DateTimeFilter<"StartupIdea"> | Date | string
+    userId?: StringFilter<"StartupIdea"> | string
+    businessModelIdeas?: JsonFilter<"StartupIdea">
+    marketPotentialScore?: IntFilter<"StartupIdea"> | number
+    mvpSuggestions?: JsonFilter<"StartupIdea">
+    overallScore?: IntFilter<"StartupIdea"> | number
+    swotAnalysis?: JsonFilter<"StartupIdea">
+    technicalFeasibilityScore?: IntFilter<"StartupIdea"> | number
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type StartupIdeaOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    problem?: SortOrder
+    solution?: SortOrder
+    audience?: SortOrder
+    businessModel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    businessModelIdeas?: SortOrder
+    marketPotentialScore?: SortOrder
+    mvpSuggestions?: SortOrder
+    overallScore?: SortOrder
+    swotAnalysis?: SortOrder
+    technicalFeasibilityScore?: SortOrder
+    _count?: StartupIdeaCountOrderByAggregateInput
+    _avg?: StartupIdeaAvgOrderByAggregateInput
+    _max?: StartupIdeaMaxOrderByAggregateInput
+    _min?: StartupIdeaMinOrderByAggregateInput
+    _sum?: StartupIdeaSumOrderByAggregateInput
+  }
+
+  export type StartupIdeaScalarWhereWithAggregatesInput = {
+    AND?: StartupIdeaScalarWhereWithAggregatesInput | StartupIdeaScalarWhereWithAggregatesInput[]
+    OR?: StartupIdeaScalarWhereWithAggregatesInput[]
+    NOT?: StartupIdeaScalarWhereWithAggregatesInput | StartupIdeaScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"StartupIdea"> | string
+    title?: StringWithAggregatesFilter<"StartupIdea"> | string
+    problem?: StringWithAggregatesFilter<"StartupIdea"> | string
+    solution?: StringWithAggregatesFilter<"StartupIdea"> | string
+    audience?: StringWithAggregatesFilter<"StartupIdea"> | string
+    businessModel?: StringWithAggregatesFilter<"StartupIdea"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"StartupIdea"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"StartupIdea"> | Date | string
+    userId?: StringWithAggregatesFilter<"StartupIdea"> | string
+    businessModelIdeas?: JsonWithAggregatesFilter<"StartupIdea">
+    marketPotentialScore?: IntWithAggregatesFilter<"StartupIdea"> | number
+    mvpSuggestions?: JsonWithAggregatesFilter<"StartupIdea">
+    overallScore?: IntWithAggregatesFilter<"StartupIdea"> | number
+    swotAnalysis?: JsonWithAggregatesFilter<"StartupIdea">
+    technicalFeasibilityScore?: IntWithAggregatesFilter<"StartupIdea"> | number
+  }
+
   export type UserCreateInput = {
     id?: string
     name?: string | null
@@ -4826,6 +6333,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    startupIdeas?: StartupIdeaCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -4839,6 +6347,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    startupIdeas?: StartupIdeaUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -4852,6 +6361,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    startupIdeas?: StartupIdeaUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -4865,6 +6375,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    startupIdeas?: StartupIdeaUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -5052,6 +6563,131 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type StartupIdeaCreateInput = {
+    id?: string
+    title: string
+    problem: string
+    solution: string
+    audience: string
+    businessModel: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    businessModelIdeas: JsonNullValueInput | InputJsonValue
+    marketPotentialScore: number
+    mvpSuggestions: JsonNullValueInput | InputJsonValue
+    overallScore: number
+    swotAnalysis: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore: number
+    user: UserCreateNestedOneWithoutStartupIdeasInput
+  }
+
+  export type StartupIdeaUncheckedCreateInput = {
+    id?: string
+    title: string
+    problem: string
+    solution: string
+    audience: string
+    businessModel: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    businessModelIdeas: JsonNullValueInput | InputJsonValue
+    marketPotentialScore: number
+    mvpSuggestions: JsonNullValueInput | InputJsonValue
+    overallScore: number
+    swotAnalysis: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore: number
+  }
+
+  export type StartupIdeaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    problem?: StringFieldUpdateOperationsInput | string
+    solution?: StringFieldUpdateOperationsInput | string
+    audience?: StringFieldUpdateOperationsInput | string
+    businessModel?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    businessModelIdeas?: JsonNullValueInput | InputJsonValue
+    marketPotentialScore?: IntFieldUpdateOperationsInput | number
+    mvpSuggestions?: JsonNullValueInput | InputJsonValue
+    overallScore?: IntFieldUpdateOperationsInput | number
+    swotAnalysis?: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+    user?: UserUpdateOneRequiredWithoutStartupIdeasNestedInput
+  }
+
+  export type StartupIdeaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    problem?: StringFieldUpdateOperationsInput | string
+    solution?: StringFieldUpdateOperationsInput | string
+    audience?: StringFieldUpdateOperationsInput | string
+    businessModel?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    businessModelIdeas?: JsonNullValueInput | InputJsonValue
+    marketPotentialScore?: IntFieldUpdateOperationsInput | number
+    mvpSuggestions?: JsonNullValueInput | InputJsonValue
+    overallScore?: IntFieldUpdateOperationsInput | number
+    swotAnalysis?: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type StartupIdeaCreateManyInput = {
+    id?: string
+    title: string
+    problem: string
+    solution: string
+    audience: string
+    businessModel: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    businessModelIdeas: JsonNullValueInput | InputJsonValue
+    marketPotentialScore: number
+    mvpSuggestions: JsonNullValueInput | InputJsonValue
+    overallScore: number
+    swotAnalysis: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore: number
+  }
+
+  export type StartupIdeaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    problem?: StringFieldUpdateOperationsInput | string
+    solution?: StringFieldUpdateOperationsInput | string
+    audience?: StringFieldUpdateOperationsInput | string
+    businessModel?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    businessModelIdeas?: JsonNullValueInput | InputJsonValue
+    marketPotentialScore?: IntFieldUpdateOperationsInput | number
+    mvpSuggestions?: JsonNullValueInput | InputJsonValue
+    overallScore?: IntFieldUpdateOperationsInput | number
+    swotAnalysis?: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type StartupIdeaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    problem?: StringFieldUpdateOperationsInput | string
+    solution?: StringFieldUpdateOperationsInput | string
+    audience?: StringFieldUpdateOperationsInput | string
+    businessModel?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    businessModelIdeas?: JsonNullValueInput | InputJsonValue
+    marketPotentialScore?: IntFieldUpdateOperationsInput | number
+    mvpSuggestions?: JsonNullValueInput | InputJsonValue
+    overallScore?: IntFieldUpdateOperationsInput | number
+    swotAnalysis?: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -5116,6 +6752,12 @@ export namespace Prisma {
     none?: SessionWhereInput
   }
 
+  export type StartupIdeaListRelationFilter = {
+    every?: StartupIdeaWhereInput
+    some?: StartupIdeaWhereInput
+    none?: StartupIdeaWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -5126,6 +6768,10 @@ export namespace Prisma {
   }
 
   export type SessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type StartupIdeaOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -5336,6 +6982,142 @@ export namespace Prisma {
     userId?: SortOrder
     expires?: SortOrder
   }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type StartupIdeaCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    problem?: SortOrder
+    solution?: SortOrder
+    audience?: SortOrder
+    businessModel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    businessModelIdeas?: SortOrder
+    marketPotentialScore?: SortOrder
+    mvpSuggestions?: SortOrder
+    overallScore?: SortOrder
+    swotAnalysis?: SortOrder
+    technicalFeasibilityScore?: SortOrder
+  }
+
+  export type StartupIdeaAvgOrderByAggregateInput = {
+    marketPotentialScore?: SortOrder
+    overallScore?: SortOrder
+    technicalFeasibilityScore?: SortOrder
+  }
+
+  export type StartupIdeaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    problem?: SortOrder
+    solution?: SortOrder
+    audience?: SortOrder
+    businessModel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    marketPotentialScore?: SortOrder
+    overallScore?: SortOrder
+    technicalFeasibilityScore?: SortOrder
+  }
+
+  export type StartupIdeaMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    problem?: SortOrder
+    solution?: SortOrder
+    audience?: SortOrder
+    businessModel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    marketPotentialScore?: SortOrder
+    overallScore?: SortOrder
+    technicalFeasibilityScore?: SortOrder
+  }
+
+  export type StartupIdeaSumOrderByAggregateInput = {
+    marketPotentialScore?: SortOrder
+    overallScore?: SortOrder
+    technicalFeasibilityScore?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
 
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
@@ -5351,6 +7133,13 @@ export namespace Prisma {
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
+  export type StartupIdeaCreateNestedManyWithoutUserInput = {
+    create?: XOR<StartupIdeaCreateWithoutUserInput, StartupIdeaUncheckedCreateWithoutUserInput> | StartupIdeaCreateWithoutUserInput[] | StartupIdeaUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StartupIdeaCreateOrConnectWithoutUserInput | StartupIdeaCreateOrConnectWithoutUserInput[]
+    createMany?: StartupIdeaCreateManyUserInputEnvelope
+    connect?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -5363,6 +7152,13 @@ export namespace Prisma {
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
     createMany?: SessionCreateManyUserInputEnvelope
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
+  export type StartupIdeaUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<StartupIdeaCreateWithoutUserInput, StartupIdeaUncheckedCreateWithoutUserInput> | StartupIdeaCreateWithoutUserInput[] | StartupIdeaUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StartupIdeaCreateOrConnectWithoutUserInput | StartupIdeaCreateOrConnectWithoutUserInput[]
+    createMany?: StartupIdeaCreateManyUserInputEnvelope
+    connect?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -5409,6 +7205,20 @@ export namespace Prisma {
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
+  export type StartupIdeaUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StartupIdeaCreateWithoutUserInput, StartupIdeaUncheckedCreateWithoutUserInput> | StartupIdeaCreateWithoutUserInput[] | StartupIdeaUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StartupIdeaCreateOrConnectWithoutUserInput | StartupIdeaCreateOrConnectWithoutUserInput[]
+    upsert?: StartupIdeaUpsertWithWhereUniqueWithoutUserInput | StartupIdeaUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StartupIdeaCreateManyUserInputEnvelope
+    set?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+    disconnect?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+    delete?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+    connect?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+    update?: StartupIdeaUpdateWithWhereUniqueWithoutUserInput | StartupIdeaUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StartupIdeaUpdateManyWithWhereWithoutUserInput | StartupIdeaUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StartupIdeaScalarWhereInput | StartupIdeaScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -5435,6 +7245,20 @@ export namespace Prisma {
     update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type StartupIdeaUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StartupIdeaCreateWithoutUserInput, StartupIdeaUncheckedCreateWithoutUserInput> | StartupIdeaCreateWithoutUserInput[] | StartupIdeaUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StartupIdeaCreateOrConnectWithoutUserInput | StartupIdeaCreateOrConnectWithoutUserInput[]
+    upsert?: StartupIdeaUpsertWithWhereUniqueWithoutUserInput | StartupIdeaUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StartupIdeaCreateManyUserInputEnvelope
+    set?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+    disconnect?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+    delete?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+    connect?: StartupIdeaWhereUniqueInput | StartupIdeaWhereUniqueInput[]
+    update?: StartupIdeaUpdateWithWhereUniqueWithoutUserInput | StartupIdeaUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StartupIdeaUpdateManyWithWhereWithoutUserInput | StartupIdeaUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StartupIdeaScalarWhereInput | StartupIdeaScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -5471,6 +7295,28 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutSessionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type UserCreateNestedOneWithoutStartupIdeasInput = {
+    create?: XOR<UserCreateWithoutStartupIdeasInput, UserUncheckedCreateWithoutStartupIdeasInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStartupIdeasInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutStartupIdeasNestedInput = {
+    create?: XOR<UserCreateWithoutStartupIdeasInput, UserUncheckedCreateWithoutStartupIdeasInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStartupIdeasInput
+    upsert?: UserUpsertWithoutStartupIdeasInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStartupIdeasInput, UserUpdateWithoutStartupIdeasInput>, UserUncheckedUpdateWithoutStartupIdeasInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -5633,6 +7479,56 @@ export namespace Prisma {
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
 
   export type AccountCreateWithoutUserInput = {
     id?: string
@@ -5691,6 +7587,50 @@ export namespace Prisma {
 
   export type SessionCreateManyUserInputEnvelope = {
     data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type StartupIdeaCreateWithoutUserInput = {
+    id?: string
+    title: string
+    problem: string
+    solution: string
+    audience: string
+    businessModel: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    businessModelIdeas: JsonNullValueInput | InputJsonValue
+    marketPotentialScore: number
+    mvpSuggestions: JsonNullValueInput | InputJsonValue
+    overallScore: number
+    swotAnalysis: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore: number
+  }
+
+  export type StartupIdeaUncheckedCreateWithoutUserInput = {
+    id?: string
+    title: string
+    problem: string
+    solution: string
+    audience: string
+    businessModel: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    businessModelIdeas: JsonNullValueInput | InputJsonValue
+    marketPotentialScore: number
+    mvpSuggestions: JsonNullValueInput | InputJsonValue
+    overallScore: number
+    swotAnalysis: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore: number
+  }
+
+  export type StartupIdeaCreateOrConnectWithoutUserInput = {
+    where: StartupIdeaWhereUniqueInput
+    create: XOR<StartupIdeaCreateWithoutUserInput, StartupIdeaUncheckedCreateWithoutUserInput>
+  }
+
+  export type StartupIdeaCreateManyUserInputEnvelope = {
+    data: StartupIdeaCreateManyUserInput | StartupIdeaCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -5754,6 +7694,43 @@ export namespace Prisma {
     expires?: DateTimeFilter<"Session"> | Date | string
   }
 
+  export type StartupIdeaUpsertWithWhereUniqueWithoutUserInput = {
+    where: StartupIdeaWhereUniqueInput
+    update: XOR<StartupIdeaUpdateWithoutUserInput, StartupIdeaUncheckedUpdateWithoutUserInput>
+    create: XOR<StartupIdeaCreateWithoutUserInput, StartupIdeaUncheckedCreateWithoutUserInput>
+  }
+
+  export type StartupIdeaUpdateWithWhereUniqueWithoutUserInput = {
+    where: StartupIdeaWhereUniqueInput
+    data: XOR<StartupIdeaUpdateWithoutUserInput, StartupIdeaUncheckedUpdateWithoutUserInput>
+  }
+
+  export type StartupIdeaUpdateManyWithWhereWithoutUserInput = {
+    where: StartupIdeaScalarWhereInput
+    data: XOR<StartupIdeaUpdateManyMutationInput, StartupIdeaUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type StartupIdeaScalarWhereInput = {
+    AND?: StartupIdeaScalarWhereInput | StartupIdeaScalarWhereInput[]
+    OR?: StartupIdeaScalarWhereInput[]
+    NOT?: StartupIdeaScalarWhereInput | StartupIdeaScalarWhereInput[]
+    id?: StringFilter<"StartupIdea"> | string
+    title?: StringFilter<"StartupIdea"> | string
+    problem?: StringFilter<"StartupIdea"> | string
+    solution?: StringFilter<"StartupIdea"> | string
+    audience?: StringFilter<"StartupIdea"> | string
+    businessModel?: StringFilter<"StartupIdea"> | string
+    createdAt?: DateTimeFilter<"StartupIdea"> | Date | string
+    updatedAt?: DateTimeFilter<"StartupIdea"> | Date | string
+    userId?: StringFilter<"StartupIdea"> | string
+    businessModelIdeas?: JsonFilter<"StartupIdea">
+    marketPotentialScore?: IntFilter<"StartupIdea"> | number
+    mvpSuggestions?: JsonFilter<"StartupIdea">
+    overallScore?: IntFilter<"StartupIdea"> | number
+    swotAnalysis?: JsonFilter<"StartupIdea">
+    technicalFeasibilityScore?: IntFilter<"StartupIdea"> | number
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     name?: string | null
@@ -5764,6 +7741,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
+    startupIdeas?: StartupIdeaCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -5776,6 +7754,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    startupIdeas?: StartupIdeaUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -5804,6 +7783,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    startupIdeas?: StartupIdeaUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -5816,6 +7796,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    startupIdeas?: StartupIdeaUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -5828,6 +7809,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
+    startupIdeas?: StartupIdeaCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -5840,6 +7822,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    startupIdeas?: StartupIdeaUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -5868,6 +7851,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    startupIdeas?: StartupIdeaUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -5880,6 +7864,75 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    startupIdeas?: StartupIdeaUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutStartupIdeasInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    hashedPassword?: string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutStartupIdeasInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: Date | string | null
+    hashedPassword?: string | null
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutStartupIdeasInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutStartupIdeasInput, UserUncheckedCreateWithoutStartupIdeasInput>
+  }
+
+  export type UserUpsertWithoutStartupIdeasInput = {
+    update: XOR<UserUpdateWithoutStartupIdeasInput, UserUncheckedUpdateWithoutStartupIdeasInput>
+    create: XOR<UserCreateWithoutStartupIdeasInput, UserUncheckedCreateWithoutStartupIdeasInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutStartupIdeasInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutStartupIdeasInput, UserUncheckedUpdateWithoutStartupIdeasInput>
+  }
+
+  export type UserUpdateWithoutStartupIdeasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutStartupIdeasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    hashedPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -5900,6 +7953,23 @@ export namespace Prisma {
     id?: string
     sessionToken: string
     expires: Date | string
+  }
+
+  export type StartupIdeaCreateManyUserInput = {
+    id?: string
+    title: string
+    problem: string
+    solution: string
+    audience: string
+    businessModel: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    businessModelIdeas: JsonNullValueInput | InputJsonValue
+    marketPotentialScore: number
+    mvpSuggestions: JsonNullValueInput | InputJsonValue
+    overallScore: number
+    swotAnalysis: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore: number
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -5960,6 +8030,57 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     sessionToken?: StringFieldUpdateOperationsInput | string
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StartupIdeaUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    problem?: StringFieldUpdateOperationsInput | string
+    solution?: StringFieldUpdateOperationsInput | string
+    audience?: StringFieldUpdateOperationsInput | string
+    businessModel?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    businessModelIdeas?: JsonNullValueInput | InputJsonValue
+    marketPotentialScore?: IntFieldUpdateOperationsInput | number
+    mvpSuggestions?: JsonNullValueInput | InputJsonValue
+    overallScore?: IntFieldUpdateOperationsInput | number
+    swotAnalysis?: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type StartupIdeaUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    problem?: StringFieldUpdateOperationsInput | string
+    solution?: StringFieldUpdateOperationsInput | string
+    audience?: StringFieldUpdateOperationsInput | string
+    businessModel?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    businessModelIdeas?: JsonNullValueInput | InputJsonValue
+    marketPotentialScore?: IntFieldUpdateOperationsInput | number
+    mvpSuggestions?: JsonNullValueInput | InputJsonValue
+    overallScore?: IntFieldUpdateOperationsInput | number
+    swotAnalysis?: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type StartupIdeaUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    problem?: StringFieldUpdateOperationsInput | string
+    solution?: StringFieldUpdateOperationsInput | string
+    audience?: StringFieldUpdateOperationsInput | string
+    businessModel?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    businessModelIdeas?: JsonNullValueInput | InputJsonValue
+    marketPotentialScore?: IntFieldUpdateOperationsInput | number
+    mvpSuggestions?: JsonNullValueInput | InputJsonValue
+    overallScore?: IntFieldUpdateOperationsInput | number
+    swotAnalysis?: JsonNullValueInput | InputJsonValue
+    technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
   }
 
 

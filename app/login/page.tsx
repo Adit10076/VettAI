@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import AuthLayout from "../auth-layout";
 import GoogleButton from "../components/GoogleButton";
 import { signIn } from "next-auth/react";
+import Loader from "../components/Loader";
 
 export default function Login() {
   const router = useRouter();
@@ -167,7 +168,12 @@ export default function Login() {
             className="auth-button mb-4"
             disabled={isLoading}
           >
-            {isLoading ? "Signing in..." : "Log In"}
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <Loader size="sm" color="white" />
+                <span className="ml-2">Signing in...</span>
+              </div>
+            ) : "Log In"}
           </button>
         </form>
         
