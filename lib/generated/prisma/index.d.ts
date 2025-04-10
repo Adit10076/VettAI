@@ -4653,6 +4653,7 @@ export namespace Prisma {
     overallScore: number
     swotAnalysis: number
     technicalFeasibilityScore: number
+    risks: number
     _all: number
   }
 
@@ -4715,6 +4716,7 @@ export namespace Prisma {
     overallScore?: true
     swotAnalysis?: true
     technicalFeasibilityScore?: true
+    risks?: true
     _all?: true
   }
 
@@ -4820,6 +4822,7 @@ export namespace Prisma {
     overallScore: number
     swotAnalysis: JsonValue
     technicalFeasibilityScore: number
+    risks: JsonValue
     _count: StartupIdeaCountAggregateOutputType | null
     _avg: StartupIdeaAvgAggregateOutputType | null
     _sum: StartupIdeaSumAggregateOutputType | null
@@ -4857,6 +4860,7 @@ export namespace Prisma {
     overallScore?: boolean
     swotAnalysis?: boolean
     technicalFeasibilityScore?: boolean
+    risks?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["startupIdea"]>
 
@@ -4876,6 +4880,7 @@ export namespace Prisma {
     overallScore?: boolean
     swotAnalysis?: boolean
     technicalFeasibilityScore?: boolean
+    risks?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["startupIdea"]>
 
@@ -4895,6 +4900,7 @@ export namespace Prisma {
     overallScore?: boolean
     swotAnalysis?: boolean
     technicalFeasibilityScore?: boolean
+    risks?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["startupIdea"]>
 
@@ -4914,9 +4920,10 @@ export namespace Prisma {
     overallScore?: boolean
     swotAnalysis?: boolean
     technicalFeasibilityScore?: boolean
+    risks?: boolean
   }
 
-  export type StartupIdeaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "problem" | "solution" | "audience" | "businessModel" | "createdAt" | "updatedAt" | "userId" | "businessModelIdeas" | "marketPotentialScore" | "mvpSuggestions" | "overallScore" | "swotAnalysis" | "technicalFeasibilityScore", ExtArgs["result"]["startupIdea"]>
+  export type StartupIdeaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "problem" | "solution" | "audience" | "businessModel" | "createdAt" | "updatedAt" | "userId" | "businessModelIdeas" | "marketPotentialScore" | "mvpSuggestions" | "overallScore" | "swotAnalysis" | "technicalFeasibilityScore" | "risks", ExtArgs["result"]["startupIdea"]>
   export type StartupIdeaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4948,6 +4955,7 @@ export namespace Prisma {
       overallScore: number
       swotAnalysis: Prisma.JsonValue
       technicalFeasibilityScore: number
+      risks: Prisma.JsonValue
     }, ExtArgs["result"]["startupIdea"]>
     composites: {}
   }
@@ -5387,6 +5395,7 @@ export namespace Prisma {
     readonly overallScore: FieldRef<"StartupIdea", 'Int'>
     readonly swotAnalysis: FieldRef<"StartupIdea", 'Json'>
     readonly technicalFeasibilityScore: FieldRef<"StartupIdea", 'Int'>
+    readonly risks: FieldRef<"StartupIdea", 'Json'>
   }
     
 
@@ -5872,7 +5881,8 @@ export namespace Prisma {
     mvpSuggestions: 'mvpSuggestions',
     overallScore: 'overallScore',
     swotAnalysis: 'swotAnalysis',
-    technicalFeasibilityScore: 'technicalFeasibilityScore'
+    technicalFeasibilityScore: 'technicalFeasibilityScore',
+    risks: 'risks'
   };
 
   export type StartupIdeaScalarFieldEnum = (typeof StartupIdeaScalarFieldEnum)[keyof typeof StartupIdeaScalarFieldEnum]
@@ -6234,6 +6244,7 @@ export namespace Prisma {
     overallScore?: IntFilter<"StartupIdea"> | number
     swotAnalysis?: JsonFilter<"StartupIdea">
     technicalFeasibilityScore?: IntFilter<"StartupIdea"> | number
+    risks?: JsonFilter<"StartupIdea">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -6253,6 +6264,7 @@ export namespace Prisma {
     overallScore?: SortOrder
     swotAnalysis?: SortOrder
     technicalFeasibilityScore?: SortOrder
+    risks?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -6275,6 +6287,7 @@ export namespace Prisma {
     overallScore?: IntFilter<"StartupIdea"> | number
     swotAnalysis?: JsonFilter<"StartupIdea">
     technicalFeasibilityScore?: IntFilter<"StartupIdea"> | number
+    risks?: JsonFilter<"StartupIdea">
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -6294,6 +6307,7 @@ export namespace Prisma {
     overallScore?: SortOrder
     swotAnalysis?: SortOrder
     technicalFeasibilityScore?: SortOrder
+    risks?: SortOrder
     _count?: StartupIdeaCountOrderByAggregateInput
     _avg?: StartupIdeaAvgOrderByAggregateInput
     _max?: StartupIdeaMaxOrderByAggregateInput
@@ -6320,6 +6334,7 @@ export namespace Prisma {
     overallScore?: IntWithAggregatesFilter<"StartupIdea"> | number
     swotAnalysis?: JsonWithAggregatesFilter<"StartupIdea">
     technicalFeasibilityScore?: IntWithAggregatesFilter<"StartupIdea"> | number
+    risks?: JsonWithAggregatesFilter<"StartupIdea">
   }
 
   export type UserCreateInput = {
@@ -6578,6 +6593,7 @@ export namespace Prisma {
     overallScore: number
     swotAnalysis: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore: number
+    risks: JsonNullValueInput | InputJsonValue
     user: UserCreateNestedOneWithoutStartupIdeasInput
   }
 
@@ -6597,6 +6613,7 @@ export namespace Prisma {
     overallScore: number
     swotAnalysis: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore: number
+    risks: JsonNullValueInput | InputJsonValue
   }
 
   export type StartupIdeaUpdateInput = {
@@ -6614,6 +6631,7 @@ export namespace Prisma {
     overallScore?: IntFieldUpdateOperationsInput | number
     swotAnalysis?: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+    risks?: JsonNullValueInput | InputJsonValue
     user?: UserUpdateOneRequiredWithoutStartupIdeasNestedInput
   }
 
@@ -6633,6 +6651,7 @@ export namespace Prisma {
     overallScore?: IntFieldUpdateOperationsInput | number
     swotAnalysis?: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+    risks?: JsonNullValueInput | InputJsonValue
   }
 
   export type StartupIdeaCreateManyInput = {
@@ -6651,6 +6670,7 @@ export namespace Prisma {
     overallScore: number
     swotAnalysis: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore: number
+    risks: JsonNullValueInput | InputJsonValue
   }
 
   export type StartupIdeaUpdateManyMutationInput = {
@@ -6668,6 +6688,7 @@ export namespace Prisma {
     overallScore?: IntFieldUpdateOperationsInput | number
     swotAnalysis?: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+    risks?: JsonNullValueInput | InputJsonValue
   }
 
   export type StartupIdeaUncheckedUpdateManyInput = {
@@ -6686,6 +6707,7 @@ export namespace Prisma {
     overallScore?: IntFieldUpdateOperationsInput | number
     swotAnalysis?: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+    risks?: JsonNullValueInput | InputJsonValue
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -7033,6 +7055,7 @@ export namespace Prisma {
     overallScore?: SortOrder
     swotAnalysis?: SortOrder
     technicalFeasibilityScore?: SortOrder
+    risks?: SortOrder
   }
 
   export type StartupIdeaAvgOrderByAggregateInput = {
@@ -7605,6 +7628,7 @@ export namespace Prisma {
     overallScore: number
     swotAnalysis: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore: number
+    risks: JsonNullValueInput | InputJsonValue
   }
 
   export type StartupIdeaUncheckedCreateWithoutUserInput = {
@@ -7622,6 +7646,7 @@ export namespace Prisma {
     overallScore: number
     swotAnalysis: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore: number
+    risks: JsonNullValueInput | InputJsonValue
   }
 
   export type StartupIdeaCreateOrConnectWithoutUserInput = {
@@ -7729,6 +7754,7 @@ export namespace Prisma {
     overallScore?: IntFilter<"StartupIdea"> | number
     swotAnalysis?: JsonFilter<"StartupIdea">
     technicalFeasibilityScore?: IntFilter<"StartupIdea"> | number
+    risks?: JsonFilter<"StartupIdea">
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -7970,6 +7996,7 @@ export namespace Prisma {
     overallScore: number
     swotAnalysis: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore: number
+    risks: JsonNullValueInput | InputJsonValue
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -8047,6 +8074,7 @@ export namespace Prisma {
     overallScore?: IntFieldUpdateOperationsInput | number
     swotAnalysis?: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+    risks?: JsonNullValueInput | InputJsonValue
   }
 
   export type StartupIdeaUncheckedUpdateWithoutUserInput = {
@@ -8064,6 +8092,7 @@ export namespace Prisma {
     overallScore?: IntFieldUpdateOperationsInput | number
     swotAnalysis?: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+    risks?: JsonNullValueInput | InputJsonValue
   }
 
   export type StartupIdeaUncheckedUpdateManyWithoutUserInput = {
@@ -8081,6 +8110,7 @@ export namespace Prisma {
     overallScore?: IntFieldUpdateOperationsInput | number
     swotAnalysis?: JsonNullValueInput | InputJsonValue
     technicalFeasibilityScore?: IntFieldUpdateOperationsInput | number
+    risks?: JsonNullValueInput | InputJsonValue
   }
 
 

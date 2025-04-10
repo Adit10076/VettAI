@@ -13,7 +13,7 @@ interface LogoProps {
 export default function Logo({ 
   variant = "default", 
   size = "md", 
-  animated = true,
+  animated = false,
   className = ""
 }: LogoProps) {
   // Size mappings

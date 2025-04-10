@@ -45,10 +45,13 @@ export async function GET(
     }
     
     return NextResponse.json(startupIdea);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching startup idea:", error);
     return NextResponse.json(
-      { error: "Failed to fetch startup idea" },
+      { 
+        error: "Failed to fetch startup idea",
+        details: error.message
+      },
       { status: 500 }
     );
   }
@@ -103,10 +106,13 @@ export async function DELETE(
     });
     
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting startup idea:", error);
     return NextResponse.json(
-      { error: "Failed to delete startup idea" },
+      { 
+        error: "Failed to delete startup idea",
+        details: error.message 
+      },
       { status: 500 }
     );
   }

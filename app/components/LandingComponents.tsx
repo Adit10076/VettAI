@@ -162,42 +162,94 @@ function ScoreMeter({ value = 75, label = "Overall Score", color = "#10b981", de
       initial="hidden"
       animate={controls}
       variants={fadeInUp}
-      className="w-28 h-28 relative mx-auto mb-2"
+      className="w-36 h-36 relative mx-auto"
     >
-      <svg className="w-full h-full -rotate-90">
-        <circle 
-          cx="50%" 
-          cy="50%" 
-          r="40" 
-          fill="none" 
-          stroke="#374151" 
-          strokeWidth="8"
-        />
-        <motion.circle 
-          cx="50%" 
-          cy="50%" 
-          r="40"
-          fill="none"
-          stroke={color}
-          strokeWidth="8"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
-          animate={isAnimated ? { 
-            strokeDashoffset: circumference - (circumference * value / 100) 
-          } : {}}
-          transition={{ duration: 1.5, ease: "easeOutCubic" }}
-        />
-      </svg>
+      {/* Outer decorative ring */}
+      <div className="absolute inset-0 rounded-full bg-gray-800/50 blur-sm"></div>
+      
+      {/* Main circle */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <svg className="w-full h-full -rotate-90">
+          {/* Background track */}
+          <circle 
+            cx="50%" 
+            cy="50%" 
+            r="40" 
+            fill="none" 
+            stroke="rgba(255,255,255,0.05)" 
+            strokeWidth="10"
+            strokeLinecap="round"
+          />
+          
+          {/* Small decorative dots around the circle */}
+          {[...Array(12)].map((_, i) => {
+            const angle = (i * 30) * (Math.PI / 180);
+            const x = 50 + 50 * Math.cos(angle);
+            const y = 50 + 50 * Math.sin(angle);
+            return (
+              <circle 
+                key={i}
+                cx={`${x}%`}
+                cy={`${y}%`}
+                r="1"
+                fill="rgba(255,255,255,0.2)"
+              />
+            );
+          })}
+          
+          {/* Progress arc */}
+          <motion.circle 
+            cx="50%" 
+            cy="50%" 
+            r="40"
+            fill="none"
+            stroke={color}
+            strokeWidth="10"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
+            animate={isAnimated ? { 
+              strokeDashoffset: circumference - (circumference * value / 100) 
+            } : {}}
+            transition={{ duration: 1.8, ease: "easeOutCubic" }}
+            style={{ filter: "drop-shadow(0 0 6px rgba(16, 185, 129, 0.3))" }}
+          />
+          
+          {/* Glowing end cap */}
+          {isAnimated && (
+            <motion.circle
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              cx={`${50 + 40 * Math.cos(((value / 100) * 360 - 90) * Math.PI / 180)}%`}
+              cy={`${50 + 40 * Math.sin(((value / 100) * 360 - 90) * Math.PI / 180)}%`}
+              r="5"
+              fill={color}
+              style={{ filter: `drop-shadow(0 0 5px ${color})` }}
+            />
+          )}
+        </svg>
+      </div>
+      
+      {/* Counter and label */}
       <motion.div 
         className="absolute inset-0 flex flex-col items-center justify-center"
-        initial={{ opacity: 0 }}
-        animate={isAnimated ? { opacity: 1 } : {}}
-        transition={{ delay: 0.2 }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={isAnimated ? { opacity: 1, scale: 1 } : {}}
+        transition={{ delay: 0.2, duration: 0.5 }}
       >
-        {isAnimated && <AnimatedCounter value={value} color={color} />}
+        <div className="relative pt-[70px]">
+          {isAnimated && <AnimatedCounter value={value} color={color} />}
+          {/* Small decorative element */}
+          <div 
+            className="absolute -right-4 -top-1 w-3 h-3 rounded-full"
+            style={{ backgroundColor: color, opacity: 0.6 }}
+          />
+        </div>
+        <div className="text-center text-sm font-medium text-gray-300 mt-2 pt-10">
+          {label}
+        </div>
       </motion.div>
-      <div className="text-center text-sm text-gray-300 mt-2">{label}</div>
     </motion.div>
   );
 }
@@ -305,47 +357,94 @@ export function HeroSection() {
       initial="hidden"
       animate={controls}
       variants={staggerChildren}
-      className="relative py-20 sm:py-28"
+      className="relative py-24 sm:py-32"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.div 
+          className="relative inline-block mb-2"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-600 to-cyan-600 rounded-lg blur-lg opacity-30 animate-pulse"></div>
+          <div className="relative bg-gray-800/30 backdrop-blur-sm px-3 py-1 rounded-lg border border-emerald-500/30">
+            <span className="text-xs font-bold tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
+              Version 1.0 — AI-Powered Startup Analysis
+            </span>
+          </div>
+        </motion.div>
+        
         <motion.div variants={fadeInUp}>
-          <H1 animate={false}>
-            Validate Your Startup Idea <GradientText>Instantly</GradientText> with AI
+          <H1 animate={false} className="text-5xl md:text-6xl lg:text-7xl !leading-tight">
+            Validate Your <span className="relative inline-block">
+              <span className="relative z-10">Startup Idea</span>
+              <span className="absolute bottom-2 md:bottom-3 left-0 w-full h-3 bg-emerald-500/20 rounded-lg -z-0"></span>
+            </span> <GradientText>Instantly</GradientText>
           </H1>
         </motion.div>
         
         <motion.div 
-          className="max-w-2xl mx-auto mt-6"
+          className="max-w-2xl mx-auto mt-8"
           variants={fadeInUp}
         >
-          <Lead animate={false}>
+          <Lead animate={false} className="text-xl md:text-2xl text-gray-200/90">
             <TypingText 
               text="Backed by open-source models like Mistral & LLaMA" 
-              typingSpeed={35}
+              typingSpeed={30}
             />
           </Lead>
         </motion.div>
         
         <motion.div variants={fadeInUp}>
-          <P animate={false} className="max-w-2xl mx-auto mt-4 mb-10">
-            Free, private, and secure evaluation of your business ideas
+          <P animate={false} className="max-w-2xl mx-auto mt-6 mb-12 text-gray-300/80">
+            Your free, private, and secure AI assistant for evaluating startup ideas, business models,
+            and market opportunities.
           </P>
         </motion.div>
         
-        <motion.div variants={fadeInUp} className="flex justify-center">
+        <motion.div 
+          variants={fadeInUp} 
+          className="flex flex-wrap justify-center gap-4"
+          whileInView={{ y: [10, 0], opacity: [0, 1] }}
+          transition={{ duration: 0.5 }}
+        >
           <GlowingButton href="/login">
             <ButtonText>Validate My Idea</ButtonText>
           </GlowingButton>
+          
+          <Link 
+            href="/signup" 
+            className="text-gray-300 hover:text-white flex items-center py-2.5 px-5 rounded-lg transition-colors duration-300 group"
+          >
+            <span>Learn More</span>
+            <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
+              <ChevronRight size={16} />
+            </span>
+          </Link>
         </motion.div>
         
-        <motion.div 
-          className="mt-16 flex flex-wrap justify-center gap-4 md:gap-12"
-          variants={fadeInUp}
-        >
-          <ScoreMeter value={78} label="Overall Score" color="#10b981" delay={0} />
-          <ScoreMeter value={82} label="Market Potential" color="#3b82f6" delay={300} />
-          <ScoreMeter value={74} label="Technical Feasibility" color="#f59e0b" delay={600} />
-        </motion.div>
+        {/* 3D Card effect for the metrics */}
+        <div className="mt-20 perspective-1000">
+          <motion.div 
+            className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 md:p-8 mx-auto max-w-4xl transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl hover:shadow-emerald-500/5"
+            initial={{ opacity: 0, rotateX: 10, y: 50 }}
+            animate={{ opacity: 1, rotateX: 0, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            whileHover={{ rotateX: -2, rotateY: 2 }}
+          >
+            <div className="text-center mb-8">
+              <H3 className="text-gray-200">
+                How your idea might <GradientText>score</GradientText>
+              </H3>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-6 md:gap-16">
+              <ScoreMeter value={78} label="Overall Score" color="#10b981" delay={0} />
+              <ScoreMeter value={82} label="Market Potential" color="#3b82f6" delay={300} />
+              <ScoreMeter value={74} label="Technical Feasibility" color="#f59e0b" delay={600} />
+            </div>
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   );

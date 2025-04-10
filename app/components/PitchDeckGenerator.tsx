@@ -34,9 +34,10 @@ interface StartupIdea {
 interface PitchDeckGeneratorProps {
   idea: StartupIdea;
   analysis: StartupEvaluation;
+  className?: string;
 }
 
-const PitchDeckGenerator = ({ idea, analysis }: PitchDeckGeneratorProps) => {
+const PitchDeckGenerator = ({ idea, analysis, className }: PitchDeckGeneratorProps) => {
   // Generate a tagline based on the idea
   const generateTagline = () => {
     const taglines = [
@@ -456,7 +457,7 @@ const PitchDeckGenerator = ({ idea, analysis }: PitchDeckGeneratorProps) => {
   return (
     <button
       onClick={generatePitchDeck}
-      className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
+      className={`bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center ${className || ''}`}
     >
       <PresentationIcon size={16} className="mr-2" />
       Download Pitch Deck

@@ -64,5 +64,6 @@ model StartupIdea {
   overallScore              Int
   swotAnalysis              Json
   technicalFeasibilityScore Int
+  risks                     Json
   user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

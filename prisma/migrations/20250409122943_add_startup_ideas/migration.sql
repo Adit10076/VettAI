@@ -11,15 +11,16 @@
 
 */
 -- DropForeignKey
-ALTER TABLE "Analysis" DROP CONSTRAINT "Analysis_startupIdeaId_fkey";
+ALTER TABLE [Analysis] DROP CONSTRAINT [Analysis_startupIdeaId_fkey];
 
 -- AlterTable
-ALTER TABLE "StartupIdea" ADD COLUMN     "businessModelIdeas" JSONB NOT NULL,
-ADD COLUMN     "marketPotentialScore" INTEGER NOT NULL,
-ADD COLUMN     "mvpSuggestions" JSONB NOT NULL,
-ADD COLUMN     "overallScore" INTEGER NOT NULL,
-ADD COLUMN     "swotAnalysis" JSONB NOT NULL,
-ADD COLUMN     "technicalFeasibilityScore" INTEGER NOT NULL;
+ALTER TABLE [StartupIdea] ADD 
+    [businessModelIdeas] NVARCHAR(MAX) NOT NULL,
+    [marketPotentialScore] INT NOT NULL,
+    [mvpSuggestions] NVARCHAR(MAX) NOT NULL,
+    [overallScore] INT NOT NULL,
+    [swotAnalysis] NVARCHAR(MAX) NOT NULL,
+    [technicalFeasibilityScore] INT NOT NULL;
 
 -- DropTable
-DROP TABLE "Analysis";
+DROP TABLE [Analysis];
