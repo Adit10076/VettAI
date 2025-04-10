@@ -1,4 +1,4 @@
-# TaskMaster Startup Idea Validation Platform
+# VettAI Startup Idea Validation Platform
 
 This project combines a Python FastAPI backend with a Next.js 15 frontend to analyze and validate startup ideas using local AI through Ollama.
 
