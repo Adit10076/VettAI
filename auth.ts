@@ -2,11 +2,123 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 import prisma from "./lib/prisma";
 
 // Force NextAuth to run in Node.js mode
 export const runtime = "nodejs";
+
+/**
+ * Simplified Authentication API
+ * 
+ * This file serves as the single source of truth for all authentication operations.
+ * It consolidates user registration, credential verification, and sign-in functionality.
+ */
+
+// Authentication helper functions
+export async function registerUser(name: string, email: string, password: string) {
+  try {
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return { success: false, message: "User already exists" };
+    }
+
+    // Hash the password
+    const hashedPassword = await hash(password, 10);
+
+    // Create the user
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        hashedPassword,
+      },
+    });
+
+    if (user) {
+      return { 
+        success: true, 
+        user: { 
+          id: user.id, 
+          name: user.name, 
+          email: user.email 
+        } 
+      };
+    }
+
+    return { success: false, message: "Failed to create user" };
+  } catch (error) {
+    console.error("Registration error:", error);
+    return { success: false, message: "Failed to register user" };
+  }
+}
+
+// Function to verify credentials
+export async function verifyCredentials(email: string, password: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user || !user.hashedPassword) {
+      return { success: false, message: "Invalid credentials" };
+    }
+
+    const passwordMatch = await compare(password, user.hashedPassword);
+
+    if (!passwordMatch) {
+      return { success: false, message: "Invalid credentials" };
+    }
+
+    return { 
+      success: true, 
+      user: { 
+        id: user.id,
+        name: user.name,
+        email: user.email
+      } 
+    };
+  } catch (error) {
+    console.error("Verification error:", error);
+    return { success: false, message: "Failed to verify credentials" };
+  }
+}
+
+// Function to sign in with Google
+export async function signInWithGoogle() {
+  return signIn("google", { callbackUrl: "/dashboard" });
+}
+
+// Function to sign in with credentials and handle the result
+export async function signInWithCredentials(email: string, password: string) {
+  try {
+    // First verify the credentials
+    const verifyResult = await verifyCredentials(email, password);
+    
+    if (!verifyResult.success) {
+      return verifyResult;
+    }
+    
+    // Then sign in
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    return { 
+      success: !result?.error,
+      error: result?.error,
+    };
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return { success: false, message: "Authentication failed" };
+  }
+}
 
 // Create auth configuration
 export const { 
@@ -167,4 +279,4 @@ export const {
     }
   },
   debug: true,
-}); 
+});

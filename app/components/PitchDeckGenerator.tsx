@@ -81,16 +81,65 @@ const PitchDeckGenerator = ({ idea, analysis, className }: PitchDeckGeneratorPro
     ];
   };
 
-  // Generate market size projections
+  // Generate market size projections and detailed market analysis
   const generateMarketData = () => {
     const baseMarket = Math.floor(analysis.score.marketPotential * 100) * 10;
     const growth = (analysis.score.overall / 20) + 0.1;
+    
+    // Generate market trends based on opportunities
+    const marketTrends = analysis.swotAnalysis.opportunities.map(opp => {
+      return {
+        trend: opp,
+        impact: Math.floor(Math.random() * 3) + 3 + "/5", // Random impact score between 3-5
+        timeframe: ["Short-term", "Medium-term", "Long-term"][Math.floor(Math.random() * 3)]
+      };
+    }).slice(0, 3); // Take top 3 trends
+    
+    // Generate market segments
+    const audienceSegments = idea.audience.split(',').map(segment => segment.trim());
+    const marketSegments = audienceSegments.length > 0 ? 
+      audienceSegments : 
+      ["Enterprise", "SMB", "Consumer"];
+    
+    // Generate market drivers
+    const marketDrivers = [
+      `Increasing demand for ${idea.title.split(' ')[0].toLowerCase()} solutions`,
+      `Growing ${idea.audience.toLowerCase()} market needs`,
+      `Technological advancements in ${idea.solution.split(' ').slice(0, 2).join(' ').toLowerCase()}`,
+      `Regulatory changes favoring ${idea.title.split(' ')[0].toLowerCase()} adoption`,
+      `Shift towards digital transformation in ${idea.audience.split(',')[0].toLowerCase()} sector`
+    ];
+    
+    // Generate market barriers
+    const marketBarriers = analysis.swotAnalysis.threats.slice(0, 3).map(threat => {
+      return { barrier: threat, severity: Math.floor(Math.random() * 3) + 2 + "/5" };
+    });
+    
+    // Generate regional market distribution
+    const regions = [
+      { name: "North America", percentage: 35 + Math.floor(Math.random() * 10) },
+      { name: "Europe", percentage: 25 + Math.floor(Math.random() * 10) },
+      { name: "Asia Pacific", percentage: 20 + Math.floor(Math.random() * 10) },
+      { name: "Rest of World", percentage: 10 + Math.floor(Math.random() * 5) }
+    ];
     
     return {
       tam: baseMarket,
       sam: Math.floor(baseMarket * 0.3),
       som: Math.floor(baseMarket * 0.05),
-      cagr: Math.floor(growth * 100) / 10
+      cagr: Math.floor(growth * 100) / 10,
+      trends: marketTrends,
+      segments: marketSegments,
+      drivers: marketDrivers.slice(0, 3),
+      barriers: marketBarriers,
+      regions: regions,
+      yearlyGrowth: [
+        { year: "Year 1", growth: Math.floor(growth * 100) / 10 + "%" },
+        { year: "Year 2", growth: Math.floor((growth + 0.02) * 100) / 10 + "%" },
+        { year: "Year 3", growth: Math.floor((growth + 0.04) * 100) / 10 + "%" },
+        { year: "Year 4", growth: Math.floor((growth + 0.03) * 100) / 10 + "%" },
+        { year: "Year 5", growth: Math.floor((growth + 0.01) * 100) / 10 + "%" }
+      ]
     };
   };
 
@@ -119,7 +168,7 @@ const PitchDeckGenerator = ({ idea, analysis, className }: PitchDeckGeneratorPro
     };
   };
 
-  // Get competitors based on SWOT analysis
+  // Get competitors based on SWOT analysis with detailed competitive analysis
   const getCompetitors = () => {
     const threats = analysis.swotAnalysis.threats;
     const competitors = [];
@@ -133,28 +182,75 @@ const PitchDeckGenerator = ({ idea, analysis, className }: PitchDeckGeneratorPro
       }
     }
     
-    // If no specific competitors mentioned, create generic ones
+    // If no specific competitors mentioned, create detailed generic ones
     if (competitors.length === 0) {
       return [
         {
           name: "MarketLeader Inc.",
           strengths: "Established brand, large customer base",
-          weaknesses: "Legacy technology, slow innovation cycle"
+          weaknesses: "Legacy technology, slow innovation cycle",
+          marketShare: 35 + Math.floor(Math.random() * 10),
+          targetAudience: "Enterprise clients and established businesses",
+          pricingStrategy: "Premium pricing with long-term contracts",
+          differentiator: "Comprehensive feature set and established reputation"
         },
         {
           name: "TechDisruptor",
           strengths: "Innovative features, modern UX",
-          weaknesses: "Limited market reach, narrow feature set"
+          weaknesses: "Limited market reach, narrow feature set",
+          marketShare: 15 + Math.floor(Math.random() * 10),
+          targetAudience: "Tech-savvy early adopters and startups",
+          pricingStrategy: "Freemium model with premium upgrades",
+          differentiator: "Cutting-edge technology and superior user experience"
         },
         {
           name: "Enterprise Solution Co.",
           strengths: "Enterprise relationships, comprehensive offering",
-          weaknesses: "Expensive, complex implementation"
+          weaknesses: "Expensive, complex implementation",
+          marketShare: 25 + Math.floor(Math.random() * 10),
+          targetAudience: "Large enterprises with complex requirements",
+          pricingStrategy: "Custom pricing based on implementation scope",
+          differentiator: "End-to-end solution with extensive customization options"
         }
       ];
+    } else {
+      // Transform extracted competitors into structured format
+      return competitors.map((comp, index) => {
+        const names = ["Industry Giant", "TechLeader", "MarketInnovator", "DomainExpert"];
+        return {
+          name: names[index % names.length],
+          description: comp,
+          strengths: index % 2 === 0 ? 
+            "Market dominance, brand recognition" : 
+            "Technical excellence, customer loyalty",
+          weaknesses: index % 2 === 0 ? 
+            "Slow to innovate, high prices" : 
+            "Limited resources, narrow market focus",
+          marketShare: 20 + Math.floor(Math.random() * 15),
+          targetAudience: idea.audience.split(',')[0],
+          pricingStrategy: ["Premium", "Freemium", "Subscription", "Usage-based"][index % 4],
+          differentiator: analysis.swotAnalysis.strengths[index % analysis.swotAnalysis.strengths.length]
+        };
+      });
     }
+  };
+  
+  // Generate competitive advantage analysis
+  const generateCompetitiveAdvantage = () => {
+    const strengths = analysis.swotAnalysis.strengths;
+    const opportunities = analysis.swotAnalysis.opportunities;
     
-    return competitors;
+    return {
+      keyDifferentiators: strengths.slice(0, 3),
+      barriers: [
+        `Proprietary ${idea.title.split(' ')[0].toLowerCase()} technology`,
+        `Unique approach to ${idea.problem.split(' ').slice(0, 3).join(' ').toLowerCase()}`,
+        `Strategic partnerships in the ${idea.audience.split(',')[0].toLowerCase()} sector`
+      ],
+      futureAdvantages: opportunities.slice(0, 2).map(opp => {
+        return `Leverage ${opp.toLowerCase()} to strengthen market position`;
+      })
+    };
   };
 
   // Generate pitch deck PDF
@@ -246,7 +342,63 @@ const PitchDeckGenerator = ({ idea, analysis, className }: PitchDeckGeneratorPro
     
     y += 70;
     y = normalText(`Market Growth: ${market.cagr}% CAGR expected over the next 5 years`, y);
-    y = normalText(`Key Trend: ${analysis.swotAnalysis.opportunities[0]}`, y + 5);
+    
+    // Market trends
+    y += 10;
+    y = normalText("Key Market Trends:", y, 14);
+    for (const trend of market.trends) {
+      y = normalText(`• ${trend.trend} (Impact: ${trend.impact}, Timeframe: ${trend.timeframe})`, y);
+    }
+    
+    // Market segments
+    y += 10;
+    y = normalText("Target Market Segments:", y, 14);
+    for (const segment of market.segments) {
+      y = normalText(`• ${segment}`, y);
+    }
+    doc.addPage();
+    
+    // 4b. DETAILED MARKET ANALYSIS
+    y = sectionTitle("MARKET ANALYSIS", 20);
+    
+    // Market drivers
+    y = normalText("Market Drivers:", y, 14);
+    for (const driver of market.drivers) {
+      y = normalText(`• ${driver}`, y);
+    }
+    
+    // Market barriers
+    y += 10;
+    y = normalText("Market Barriers:", y, 14);
+    for (const barrier of market.barriers) {
+      y = normalText(`• ${barrier.barrier} (Severity: ${barrier.severity})`, y);
+    }
+    
+    // Regional distribution
+    y += 10;
+    y = normalText("Regional Market Distribution:", y, 14);
+    
+    // Create a horizontal bar chart for regional distribution
+    const barHeight = 15;
+    const barMaxWidth = 120;
+    const startX = 20;
+    const startY = y + 5;
+    
+    for (let i = 0; i < market.regions.length; i++) {
+      const region = market.regions[i];
+      const barWidth = (region.percentage / 100) * barMaxWidth;
+      
+      // Draw the bar
+      doc.setFillColor(41, 128, 185);
+      doc.rect(startX, startY + (i * (barHeight + 5)), barWidth, barHeight, 'F');
+      
+      // Add the label
+      doc.setTextColor(60, 60, 60);
+      doc.setFontSize(10);
+      doc.text(`${region.name}: ${region.percentage}%`, startX + barWidth + 5, startY + (i * (barHeight + 5)) + (barHeight / 2) + 3);
+    }
+    
+    y = startY + (market.regions.length * (barHeight + 5)) + 15;
     doc.addPage();
     
     // 5. PRODUCT OVERVIEW
@@ -313,11 +465,12 @@ const PitchDeckGenerator = ({ idea, analysis, className }: PitchDeckGeneratorPro
     y = sectionTitle("COMPETITIVE LANDSCAPE", 20);
     
     const competitors = getCompetitors();
+    const competitiveAdvantage = generateCompetitiveAdvantage();
     
     // Competitive matrix
     autoTable(doc, {
       startY: y,
-      head: [['Features', title, 'Competitor A', 'Competitor B']],
+      head: [['Features', title, competitors[0]?.name || 'Competitor A', competitors[1]?.name || 'Competitor B']],
       body: [
         ['Core Solution', '✓✓✓', '✓✓', '✓'],
         ['User Experience', '✓✓✓', '✓', '✓✓'],
@@ -332,8 +485,50 @@ const PitchDeckGenerator = ({ idea, analysis, className }: PitchDeckGeneratorPro
     y = (doc as any).lastAutoTable.finalY + 15;
     
     y = normalText("Our Competitive Edge:", y, 14);
-    for (const strength of analysis.swotAnalysis.strengths.slice(0, 2)) {
+    for (const strength of competitiveAdvantage.keyDifferentiators) {
       y = normalText(`• ${strength}`, y);
+    }
+    
+    // Market positioning
+    y += 10;
+    y = normalText("Market Positioning:", y, 14);
+    y = normalText(`${title} positions itself as the innovative solution that addresses ${idea.problem.split('.')[0].toLowerCase()} with a unique approach that competitors have failed to implement.`, y);
+    doc.addPage();
+    
+    // 8b. COMPETITOR ANALYSIS
+    y = sectionTitle("DETAILED COMPETITOR ANALYSIS", 20);
+    
+    // Detailed competitor analysis
+    for (let i = 0; i < Math.min(competitors.length, 3); i++) {
+      const comp = competitors[i];
+      y = normalText(`${comp.name}:`, y, 14);
+      
+      // if (comp.description) {
+      //   y = normalText(comp.description, y);
+      // }
+      
+      y = normalText(`• Market Share: ${comp.marketShare}%`, y);
+      y = normalText(`• Target Audience: ${comp.targetAudience}`, y);
+      y = normalText(`• Pricing Strategy: ${comp.pricingStrategy}`, y);
+      y = normalText(`• Strengths: ${comp.strengths}`, y);
+      y = normalText(`• Weaknesses: ${comp.weaknesses}`, y);
+      y = normalText(`• Key Differentiator: ${comp.differentiator}`, y);
+      
+      y += 5;
+    }
+    
+    // Entry barriers
+    y += 10;
+    y = normalText("Our Barriers to Competition:", y, 14);
+    for (const barrier of competitiveAdvantage.barriers) {
+      y = normalText(`• ${barrier}`, y);
+    }
+    
+    // Future competitive advantages
+    y += 10;
+    y = normalText("Future Competitive Advantages:", y, 14);
+    for (const advantage of competitiveAdvantage.futureAdvantages) {
+      y = normalText(`• ${advantage}`, y);
     }
     doc.addPage();
     
@@ -465,4 +660,4 @@ const PitchDeckGenerator = ({ idea, analysis, className }: PitchDeckGeneratorPro
   );
 };
 
-export default PitchDeckGenerator; 
+export default PitchDeckGenerator;

@@ -8,6 +8,7 @@ import GoogleButton from "../components/GoogleButton";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import { Lock, Mail, AlertCircle, Loader as Spinner } from "lucide-react";
+import { loginUserAction } from "../lib/actions";
 
 export default function Login() {
   const router = useRouter();
@@ -44,27 +45,19 @@ export default function Login() {
     setError("");
 
     try {
-      // First validate credentials with our API
-      const validateResponse = await fetch("/api/auth/credentials", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const validateData = await validateResponse.json();
-
-      if (!validateResponse.ok) {
-        setError(validateData.error || "Authentication failed");
+      // Use the simplified authentication flow with our server action
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('password', password);
+      
+      // Use the updated loginUserAction from lib/actions
+      const result = await loginUserAction(formData);
+      
+      if (!result.success) {
+        setError(result.message || "Authentication failed");
         setIsLoading(false);
         return;
       }
-
-      // If validation succeeds, use NextAuth signIn
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
 
       if (result?.ok) {
         // Check if we need to link a Google account
@@ -94,7 +87,7 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     try {
       await signIn("google", { 
-        callbackUrl: "/api/auth/google/callback",
+        callbackUrl: "/dashboard",
         redirect: true
       });
     } catch (error) {
@@ -193,4 +186,4 @@ export default function Login() {
       </AuthLayout>
     
   );
-} 
+}
