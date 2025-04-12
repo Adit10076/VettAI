@@ -80,7 +80,7 @@ export default function SubmitIdea() {
     setFormError(null);
 
     try {
-      const response = await fetch("http://localhost:8000/validate", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/validate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
