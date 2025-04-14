@@ -173,7 +173,7 @@ export function GradientText({ children, className = "" }: TextProps) {
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
         backgroundClip: "text",
-        textFillColor: "transparent"
+        color: "transparent"
       }}
     >
       {children}
