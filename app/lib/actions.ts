@@ -1,6 +1,6 @@
 'use server';
 
-import { signInWithGoogle } from "../../auth";
+import { registerUser, verifyCredentials, signInWithGoogle } from "../../auth";
 
 /**
  * Simplified Server Actions for Authentication
@@ -16,21 +16,12 @@ export async function registerUserAction(formData: FormData) {
   const password = formData.get('password') as string;
 
   try {
-    // Use the consolidated auth API
-    const response = await fetch('/api/auth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        action: 'register',
-        name,
-        email,
-        password
-      }),
-    });
+    // Directly call the auth functions instead of using fetch
+    console.log(`Processing registration for ${email}`);
     
-    return await response.json();
+    // Call the registerUser function directly
+    const result = await registerUser(name, email, password);
+    return result;
   } catch (error) {
     console.error("Registration error:", error);
     return { success: false, message: "Failed to register user" };
@@ -43,20 +34,12 @@ export async function loginUserAction(formData: FormData) {
   const password = formData.get('password') as string;
 
   try {
-    // Use the consolidated auth API
-    const response = await fetch('/api/auth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        action: 'login',
-        email,
-        password
-      }),
-    });
+    // Directly call the auth functions instead of using fetch
+    console.log(`Processing login for ${email}`);
     
-    return await response.json();
+    // Call the verifyCredentials function directly
+    const result = await verifyCredentials(email, password);
+    return { ...result, ok: result.success };
   } catch (error) {
     console.error("Login error:", error);
     return { success: false, message: "Failed to login" };

@@ -39,7 +39,12 @@ export default function Dashboard() {
     
     if (status === "unauthenticated") {
       console.log("User not authenticated, redirecting to login");
-      router.push("/login");
+      // Add a small delay to allow any auth callbacks to complete
+      const redirectTimer = setTimeout(() => {
+        router.push("/login");
+      }, 300);
+      
+      return () => clearTimeout(redirectTimer);
     } else {
       console.log("User authenticated:", session?.user?.email);
     }

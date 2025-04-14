@@ -4,12 +4,15 @@
 
 // Get the callback URL for after successful authentication
 export function getCallbackUrl(): string {
-  return "/dashboard";
+  const baseUrl = getAuthBaseUrl();
+  return `${baseUrl}/dashboard`;
 }
 
 // Get the base URL for the application
 export function getAuthBaseUrl(): string {
-  return process.env.NEXTAUTH_URL || "http://localhost:3000";
+  // Ensure we have a valid base URL with protocol
+  const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  return url.startsWith('http') ? url : `https://${url}`;
 }
 
 // Get the full URL for NextAuth API endpoints

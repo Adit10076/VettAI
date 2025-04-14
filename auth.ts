@@ -92,7 +92,8 @@ export async function verifyCredentials(email: string, password: string) {
 // Function to sign in with Google
 export async function signInWithGoogle() {
   return signIn("google", { 
-    callbackUrl: "/dashboard"
+    callbackUrl: getCallbackUrl(),
+    redirect: true
   });
 }
 
@@ -219,9 +220,25 @@ export const {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) {
-        return `${baseUrl}${url}`;
+      // Custom redirect logic for authentication flows
+      console.log(`NextAuth redirect called. URL: ${url}, baseUrl: ${baseUrl}`);
+      
+      // For dashboard redirects, ensure we use the full URL
+      if (url.endsWith('/dashboard') || url === '/dashboard') {
+        const fullUrl = `${baseUrl}/dashboard`;
+        console.log(`Redirecting to dashboard: ${fullUrl}`);
+        return fullUrl;
       }
+      
+      // For relative URLs, prepend the base URL
+      if (url.startsWith("/")) {
+        const fullUrl = `${baseUrl}${url}`;
+        console.log(`Redirecting to: ${fullUrl}`);
+        return fullUrl;
+      }
+      
+      // Default case: return the URL as is
+      console.log(`Using default redirect to: ${url}`);
       return url;
     },
     // Allow signin if the user already exists with same email

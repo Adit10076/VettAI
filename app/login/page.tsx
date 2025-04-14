@@ -86,13 +86,23 @@ export default function Login() {
 
   const handleGoogleLogin = async () => {
     try {
+      setIsLoading(true);
+      setError("");
+      
+      // Use newer redirect: true option to ensure proper redirection
       await signIn("google", { 
         callbackUrl: "/dashboard",
         redirect: true
       });
+      
+      // If we get here, it means the redirect didn't happen, which is unexpected
+      console.error("Google signin didn't redirect as expected");
+      setError("Failed to sign in with Google. Please try again.");
+      setIsLoading(false);
     } catch (error) {
       console.error("Google sign in error:", error);
       setError("Failed to sign in with Google. Please try again.");
+      setIsLoading(false);
     }
   };
 
