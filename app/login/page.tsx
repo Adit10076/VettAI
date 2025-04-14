@@ -45,16 +45,15 @@ export default function Login() {
     setError("");
 
     try {
-      // Use the simplified authentication flow with our server action
-      const formData = new FormData();
-      formData.append('email', email);
-      formData.append('password', password);
-      
-      // Use the updated loginUserAction from lib/actions
-      const result = await loginUserAction(formData);
-      
-      if (!result.success) {
-        setError(result.message || "Authentication failed");
+      // Simplify login flow - use signIn directly instead of the server action
+      const signInResult = await signIn("credentials", {
+        email,
+        password,
+        redirect: false
+      });
+
+      if (signInResult?.error) {
+        setError(signInResult.error || "Invalid email or password");
         setIsLoading(false);
         return;
       }
@@ -70,11 +69,12 @@ export default function Login() {
         return;
       }
       
-      // Regular successful authentication
+      // Regular successful authentication - redirect to dashboard
+      console.log("Login successful, redirecting to dashboard");
       router.push("/dashboard");
     } catch (error) {
+      console.error("Login error:", error);
       setError("Something went wrong. Please try again.");
-      console.error(error);
     } finally {
       setIsLoading(false);
     }

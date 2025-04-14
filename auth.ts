@@ -166,7 +166,7 @@ export const {
             where: { email: credentials.email as string },
           });
 
-          console.log("User found:", user ? { id: user.id, hasPassword: !!user.hashedPassword } : "not found");
+          console.log("User found:", user ? { id: user.id, email: user.email, hasPassword: !!user.hashedPassword } : "not found");
 
           // If no user or no hashed password (for users created via social login)
           if (!user || !user.hashedPassword) {
@@ -206,14 +206,17 @@ export const {
     error: "/login",
   },
   trustHost: true,
+  debug: process.env.NODE_ENV !== 'production',
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      console.log("JWT callback:", { tokenSub: token.sub, userId: user?.id, accountType: account?.provider });
       if (user) {
         token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
+      console.log("Session callback:", { sessionUserId: session.user?.id, tokenSub: token.sub });
       if (session.user) {
         session.user.id = token.sub!;
       }

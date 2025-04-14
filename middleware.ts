@@ -6,23 +6,23 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const searchParams = request.nextUrl.searchParams.toString();
   
-  // Always skip middleware for all API routes and auth-related callbacks
+  // Always skip middleware for all API routes, static assets, and auth-related callbacks
   if (path.startsWith("/api/") || 
       path.includes("/callback") || 
       path.includes("/auth") || 
+      path.includes("_next") ||
+      path === "/login" ||
+      path === "/signup" ||
       searchParams.includes("code=")) {
-    console.log(`Skipping middleware for API/auth route: ${path}`);
+    console.log(`Skipping middleware for API/auth/public route: ${path}`);
     return NextResponse.next();
   }
 
   // Define which paths are public and which need authentication
-  const isPublicPath = 
-    path === "/" || 
-    path === "/login" || 
-    path === "/signup";
+  const isPublicPath = path === "/";
 
   // Don't redirect on the root path
-  if (path === "/") {
+  if (isPublicPath) {
     return NextResponse.next();
   }
 
@@ -40,13 +40,8 @@ export async function middleware(request: NextRequest) {
     // Get the base URL from environment or use the request URL
     const baseUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
 
-    // Redirect logic
-    if (isPublicPath && isAuthenticated) {
-      console.log(`Redirecting authenticated user from ${path} to /dashboard`);
-      return NextResponse.redirect(new URL("/dashboard", baseUrl));
-    }
-
-    if (!isPublicPath && !isAuthenticated) {
+    // Only redirect unauthenticated users from protected routes
+    if (!isAuthenticated) {
       console.log(`Redirecting unauthenticated user from ${path} to /login`);
       return NextResponse.redirect(new URL("/login", baseUrl));
     }
