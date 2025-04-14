@@ -171,3 +171,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Google OAuth Configuration
+
+For Google authentication to work properly, you need to configure the following in the Google Cloud Console:
+
+1. Go to the Google Cloud Console
+2. Select your project
+3. Go to "APIs & Services" > "Credentials"
+4. Edit your OAuth 2.0 Client ID
+5. Under "Authorized redirect URIs", add:
+   - `https://vett-ai.vercel.app/api/auth/callback/google`
+
+Make sure the exact URI matches what's configured in your application.

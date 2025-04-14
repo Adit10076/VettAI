@@ -6,15 +6,9 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const searchParams = request.nextUrl.searchParams.toString();
   
-  // Check if this is a callback from Google OAuth
-  const isAuthCallback = 
-    path.includes("/api/auth/callback") || 
-    path.startsWith("/api/auth") ||
-    (searchParams && searchParams.includes("code="));
-
-  // Skip middleware for auth callbacks
-  if (isAuthCallback) {
-    console.log(`Skipping middleware for auth callback: ${path}${searchParams ? `?${searchParams}` : ''}`);
+  // Always skip middleware for all API routes, especially auth-related ones
+  if (path.startsWith("/api/")) {
+    console.log(`Skipping middleware for API route: ${path}`);
     return NextResponse.next();
   }
 
@@ -22,13 +16,7 @@ export async function middleware(request: NextRequest) {
   const isPublicPath = 
     path === "/" || 
     path === "/login" || 
-    path === "/signup" || 
-    path.startsWith("/api/");
-
-  // Skip the middleware for API routes and auth-related paths
-  if (path.startsWith("/api/") || path.includes("auth")) {
-    return NextResponse.next();
-  }
+    path === "/signup";
 
   // Get the session using JWT token - this works in Edge
   const token = await getToken({ 
@@ -44,15 +32,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Get the base URL from environment or use the request URL
+  const baseUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
+
   // Redirect logic
   if (isPublicPath && isAuthenticated) {
     console.log(`Redirecting authenticated user from ${path} to /dashboard`);
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/dashboard", baseUrl));
   }
 
   if (!isPublicPath && !isAuthenticated) {
     console.log(`Redirecting unauthenticated user from ${path} to /login`);
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/login", baseUrl));
   }
 
   return NextResponse.next();
@@ -63,11 +54,11 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api/auth (NextAuth API routes)
+     * - api (All API routes, especially auth)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api/auth|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 }; 

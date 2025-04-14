@@ -1,20 +1,19 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import List
 import httpx
 import json
 import os
-from typing import List
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
 app = FastAPI()
 
-# Get frontend URL from environment variable, default to localhost:3000 if not set
+# CORS
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[frontend_url],
@@ -23,6 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Pydantic Models
 class StartupIdea(BaseModel):
     title: str
     problem: str
@@ -98,9 +98,9 @@ Output JSON format:
 {{
   "isGibberish": boolean,
   "score": {{
-    "overall": number [0-100],
-    "marketPotential": number [0-100],
-    "technicalFeasibility": number [0-100]
+    "overall": number,
+    "marketPotential": number,
+    "technicalFeasibility": number
   }},
   "swotAnalysis": {{
     "strengths": [string, ...],
@@ -112,51 +112,40 @@ Output JSON format:
   "businessModelIdeas": [string, ...],
   "marketAnalysis": {{
     "targetMarket": string,
-    "tam": string (total addressable market in USD, numeric format only, e.g. "$1500000000", and mention the user types or groups included in TAM),
-    "sam": string (serviceable available market in USD, and mention who is actually reachable based on your scope),
-    "som": string (serviceable obtainable market in USD, and mention who is most likely to convert first),
-    "growthRate": string (state the CAGR or growth and the reason behind this growth based on market forces or user demand),
+    "tam": string,
+    "sam": string,
+    "som": string,
+    "growthRate": string,
     "trends": [string, ...],
     "competitors": [string, ...],
     "customerNeeds": [string, ...],
     "barriersToEntry": [string, ...]
   }}
 }}
-- Return only valid JSON
-- Do not repeat or rephrase the input.
-- No markdown, no commentary.
+Only output valid JSON. No comments or markdown.
 """
 
+    headers = {
+        "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
+        "Content-Type": "application/json"
+    }
+
+    body = {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct", 
+        "messages": [{"role": "user", "content": prompt}]
+    }
+
     try:
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            check = await client.get("http://localhost:11434/api/tags")
-            if check.status_code != 200:
-                raise HTTPException(status_code=503, detail="Ollama not available")
-
-        text_response = ""
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            async with client.stream("POST", "http://localhost:11434/api/generate",
-                                     json={"model": "mistral", "prompt": prompt, "stream": True}) as response:
-                async for line in response.aiter_lines():
-                    if line.strip():
-                        try:
-                            piece = json.loads(line)
-                            text_response += piece.get("response", "")
-                        except:
-                            continue
-
-        if text_response.strip().startswith("{") and text_response.strip().endswith("}"):
-            return json.loads(text_response)
-
-        json_start = text_response.find("{")
-        json_end = text_response.rfind("}") + 1
-        json_str = text_response[json_start:json_end]
-        result = json.loads(json_str)
-
-        if all(k in result for k in ["score", "swotAnalysis", "mvpSuggestions", "businessModelIdeas", "marketAnalysis"]):
-            return result
-        return FALLBACK_RESPONSE
-
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers,
+                json=body
+            )
+            response.raise_for_status()
+            content = response.json()["choices"][0]["message"]["content"]
+            parsed = json.loads(content)
+            return parsed
     except Exception as e:
-        print("Streaming or parsing error:", str(e))
-        raise HTTPException(status_code=500, detail="Error generating response")
+        print("Groq error:", e)
+        return FALLBACK_RESPONSE

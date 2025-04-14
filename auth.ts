@@ -90,7 +90,8 @@ export async function verifyCredentials(email: string, password: string) {
 
 // Function to sign in with Google
 export async function signInWithGoogle() {
-  return signIn("google", { callbackUrl: "/dashboard" });
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  return signIn("google", { callbackUrl: `${baseUrl}/dashboard` });
 }
 
 // Function to sign in with credentials and handle the result
@@ -200,6 +201,7 @@ export const {
     signOut: "/",
     error: "/login",
   },
+  trustHost: true,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -215,6 +217,9 @@ export const {
       return session;
     },
     async redirect({ url, baseUrl }) {
+      // Make sure baseUrl is set correctly
+      baseUrl = process.env.NEXTAUTH_URL || baseUrl;
+      
       // Allows relative callback URLs
       if (url.startsWith("/")) {
         console.log(`Redirecting to ${baseUrl}${url}`);
@@ -243,7 +248,7 @@ export const {
           
           // Check if Google account is already linked
           const linkedAccount = existingUser.accounts.find(
-            acc => acc.provider === "google"
+            (acc: any) => acc.provider === "google"
           );
           
           if (!linkedAccount) {
