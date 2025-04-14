@@ -39,7 +39,7 @@ export async function loginUserAction(formData: FormData) {
     
     // Call the verifyCredentials function directly
     const result = await verifyCredentials(email, password);
-    return { ...result, ok: result.success };
+    return result;
   } catch (error) {
     console.error("Login error:", error);
     return { success: false, message: "Failed to login" };

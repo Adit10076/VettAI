@@ -59,23 +59,19 @@ export default function Login() {
         return;
       }
 
-      if (result?.ok) {
-        // Check if we need to link a Google account
-        if (linkEmailParam && linkEmailParam === email) {
-          console.log("User successfully logged in, now redirecting to Google auth to link account");
-          // Redirect to Google auth to link the account
-          signIn("google", { 
-            callbackUrl: "/dashboard",
-            redirect: true
-          });
-          return;
-        }
-        
-        // Regular successful authentication
-        router.push("/dashboard");
-      } else {
-        setError("Failed to create session. Please try again.");
+      // Check if we need to link a Google account
+      if (linkEmailParam && linkEmailParam === email) {
+        console.log("User successfully logged in, now redirecting to Google auth to link account");
+        // Redirect to Google auth to link the account
+        signIn("google", { 
+          callbackUrl: "/dashboard",
+          redirect: true
+        });
+        return;
       }
+      
+      // Regular successful authentication
+      router.push("/dashboard");
     } catch (error) {
       setError("Something went wrong. Please try again.");
       console.error(error);
