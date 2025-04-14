@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -77,7 +77,8 @@ interface StartupEvaluation {
   marketAnalysis: MarketAnalysis;
 }
 
-export default function Results() {
+// Create a client component that uses useSearchParams
+function ResultsContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1055,5 +1056,17 @@ export default function Results() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Import useSearchParams in the client component that uses it
+import { useSearchParams } from "next/navigation";
+
+// Main component that wraps the client component with Suspense
+export default function Results() {
+  return (
+    <Suspense fallback={<Loader fullPage text="Loading analysis results..." />}>
+      <ResultsContent />
+    </Suspense>
   );
 }
