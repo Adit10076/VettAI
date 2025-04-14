@@ -6,47 +6,45 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const searchParams = request.nextUrl.searchParams.toString();
   
-  // Always skip middleware for all API routes, static files, and auth-related callbacks
+  console.log(`Middleware processing: ${path}${searchParams ? `?${searchParams}` : ''}`);
+  
+  // Always skip middleware for all API routes, static files, callbacks, auth routes
   if (path.startsWith("/api/") || 
       path.includes("/callback") || 
       path.includes("/auth") || 
+      path === "/login" || 
+      path === "/signup" || 
+      path === "/" ||
       path.includes("/_next/") ||
       path.includes("favicon.ico") ||
       searchParams.includes("code=") ||
       searchParams.includes("error=")) {
+    console.log(`Skipping middleware for path: ${path}`);
     return NextResponse.next();
   }
 
-  // Define which paths are public and which need authentication
-  const isPublicPath = 
-    path === "/" || 
-    path === "/login" || 
-    path === "/signup";
-
   try {
     // Get the session using JWT token - this works in Edge
+    console.log("Checking authentication token");
     const token = await getToken({ 
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
     });
     
     const isAuthenticated = !!token;
+    console.log(`User authenticated: ${isAuthenticated}, User ID: ${token?.sub || 'none'}`);
     
     // Get the base URL from environment or use the request URL
     const baseUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
 
-    // Redirect logic
-    if (isPublicPath && isAuthenticated) {
-      // Redirect authenticated users away from login/signup pages
-      return NextResponse.redirect(new URL("/dashboard", baseUrl));
-    }
-
-    if (!isPublicPath && !isAuthenticated) {
-      // Redirect unauthenticated users away from protected routes
+    // If not authenticated and trying to access protected route, redirect to login
+    if (!isAuthenticated) {
+      console.log(`Unauthenticated access to protected route: ${path}`);
       const callbackUrl = encodeURIComponent(request.nextUrl.pathname);
       return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, baseUrl));
     }
 
+    console.log(`Access granted to: ${path}`);
     return NextResponse.next();
   } catch (error) {
     console.error("Middleware error:", error);

@@ -1,6 +1,9 @@
 'use server';
 
-import { registerUser, verifyCredentials } from "../../auth";
+import { registerUser, verifyCredentials, AuthResult } from "../../auth";
+
+// Define common return types
+// Type is now imported from auth.ts
 
 /**
  * Simplified Server Actions for Authentication
@@ -10,7 +13,7 @@ import { registerUser, verifyCredentials } from "../../auth";
  */
 
 // Server action for user registration
-export async function registerUserAction(formData: FormData) {
+export async function registerUserAction(formData: FormData): Promise<AuthResult> {
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
@@ -31,7 +34,7 @@ export async function registerUserAction(formData: FormData) {
 }
 
 // Server action for credential login
-export async function loginUserAction(formData: FormData) {
+export async function loginUserAction(formData: FormData): Promise<AuthResult> {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
@@ -51,7 +54,8 @@ export async function loginUserAction(formData: FormData) {
     // Credentials are valid, return success
     return { 
       success: true, 
-      user: result.user
+      user: result.user,
+      message: "Login successful"
     };
   } catch (error) {
     console.error("Login error:", error);

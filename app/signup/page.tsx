@@ -93,9 +93,12 @@ export default function Signup() {
       setIsLoading(true);
       setError("");
       
+      console.log(`Starting Google sign-up, redirecting to dashboard`);
+      
       // Use newer redirect: true option to ensure proper redirection
+      // Always redirect to dashboard to avoid redirect loops
       await signIn("google", { 
-        callbackUrl: callbackUrl,
+        callbackUrl: "/dashboard",
         redirect: true
       });
       
