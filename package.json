@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "prisma generate && prisma db push --accept-data-loss && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
     "db:push": "prisma db push --accept-data-loss",
     "db:migrate": "prisma migrate deploy",
+    "db:migrate:create": "prisma migrate dev --name initial_schema",
+    "db:reset": "prisma migrate reset --force",
     "backend": "cd backend && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
     "dev:all": "concurrently \"npm run dev\" \"npm run backend\" \"npx prisma generate\""
   },

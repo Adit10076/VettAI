@@ -21,7 +21,28 @@ For Vercel deployment:
 
 1. Set up a PostgreSQL database (Railway, Supabase, Neon, etc.)
 2. Add the `DATABASE_URL` environment variable in Vercel with the connection string
-3. Deploy the application - migrations will run automatically
+3. Deploy the application - the schema will be pushed automatically
+
+## PostgreSQL vs SQL Server Syntax Issues
+
+If you encounter errors with square brackets in your migrations:
+
+```
+ERROR: syntax error at or near "["
+```
+
+This means your migrations were created for SQL Server but you're using PostgreSQL. 
+
+Solutions:
+1. Use `prisma db push` instead of migrations (current approach)
+2. Clean up migrations and recreate them:
+   ```bash
+   # Delete the migrations folder
+   rm -rf prisma/migrations
+   
+   # Create fresh migrations for PostgreSQL 
+   npm run db:migrate:create
+   ```
 
 ## Manual Database Operations
 
@@ -40,9 +61,9 @@ npm run db:migrate
 If you encounter "Table does not exist" errors:
 
 1. Check that your DATABASE_URL is correct
-2. Run manual migrations:
+2. Run the database push command:
    ```bash
-   npx prisma migrate deploy
+   npx prisma db push --accept-data-loss
    ```
 3. If needed, reset the database (will delete all data):
    ```bash

@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE [StartupIdea] ADD [risks] NVARCHAR(MAX) DEFAULT '[]' NOT NULL;
+ALTER TABLE "StartupIdea" ADD COLUMN "risks" TEXT NOT NULL DEFAULT '[]';
