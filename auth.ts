@@ -92,8 +92,7 @@ export async function verifyCredentials(email: string, password: string) {
 // Function to sign in with Google
 export async function signInWithGoogle() {
   return signIn("google", { 
-    callbackUrl: getCallbackUrl(),
-    redirect: true
+    callbackUrl: "/dashboard"
   });
 }
 
@@ -111,7 +110,7 @@ export async function signInWithCredentials(email: string, password: string) {
     const result = await signIn("credentials", {
       email,
       password,
-      callbackUrl: getCallbackUrl(),
+      callbackUrl: "/dashboard",
       redirect: false,
     });
 
@@ -205,7 +204,6 @@ export const {
     signOut: "/",
     error: "/login",
   },
-  basePath: "/api/auth",
   trustHost: true,
   callbacks: {
     async jwt({ token, user }) {
@@ -218,27 +216,13 @@ export const {
       if (session.user) {
         session.user.id = token.sub!;
       }
-      console.log("Session callback. User:", session.user?.email);
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Make sure baseUrl is set correctly
-      baseUrl = getAuthBaseUrl();
-      
-      // Allows relative callback URLs
       if (url.startsWith("/")) {
-        console.log(`Redirecting to ${baseUrl}${url}`);
         return `${baseUrl}${url}`;
       }
-      // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) {
-        console.log(`Redirecting to ${url}`);
-        return url;
-      }
-      
-      // Default to dashboard after signin
-      console.log(`Redirecting to ${baseUrl}/dashboard`);
-      return `${baseUrl}/dashboard`;
+      return url;
     },
     // Allow signin if the user already exists with same email
     async signIn({ user, account, profile }) {
@@ -287,6 +271,5 @@ export const {
       }
       return true;
     }
-  },
-  debug: true,
+  }
 });
