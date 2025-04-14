@@ -45,7 +45,20 @@ export default function Login() {
     setError("");
 
     try {
-      // Simplify login flow - use signIn directly instead of the server action
+      // First verify credentials using server action
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('password', password);
+      
+      const result = await loginUserAction(formData);
+      
+      if (!result.success) {
+        setError(result.message || "Authentication failed");
+        setIsLoading(false);
+        return;
+      }
+
+      // If verification succeeded, use signIn directly for session creation
       const signInResult = await signIn("credentials", {
         email,
         password,
@@ -53,7 +66,7 @@ export default function Login() {
       });
 
       if (signInResult?.error) {
-        setError(signInResult.error || "Invalid email or password");
+        setError(signInResult.error || "Authentication failed");
         setIsLoading(false);
         return;
       }
