@@ -1,6 +1,6 @@
 'use server';
 
-import { registerUser, verifyCredentials, signInWithGoogle } from "../../auth";
+import { registerUser, verifyCredentials } from "../../auth";
 
 /**
  * Simplified Server Actions for Authentication
@@ -16,8 +16,10 @@ export async function registerUserAction(formData: FormData) {
   const password = formData.get('password') as string;
 
   try {
-    // Directly call the auth functions instead of using fetch
-    console.log(`Processing registration for ${email}`);
+    // Validate inputs
+    if (!name || !email || !password) {
+      return { success: false, message: "All fields are required" };
+    }
     
     // Call the registerUser function directly
     const result = await registerUser(name, email, password);
@@ -34,19 +36,25 @@ export async function loginUserAction(formData: FormData) {
   const password = formData.get('password') as string;
 
   try {
-    // Directly call the auth functions instead of using fetch
-    console.log(`Processing login for ${email}`);
+    // Validate inputs
+    if (!email || !password) {
+      return { success: false, message: "Email and password are required" };
+    }
     
-    // Call the verifyCredentials function directly
+    // First verify the credentials
     const result = await verifyCredentials(email, password);
-    return result;
+    
+    if (!result.success) {
+      return result;
+    }
+    
+    // Credentials are valid, return success
+    return { 
+      success: true, 
+      user: result.user
+    };
   } catch (error) {
     console.error("Login error:", error);
     return { success: false, message: "Failed to login" };
   }
-}
-
-// Server action for Google login
-export async function googleLoginAction() {
-  return signInWithGoogle();
 }

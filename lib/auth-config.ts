@@ -10,8 +10,20 @@ export function getCallbackUrl(): string {
 
 // Get the base URL for the application
 export function getAuthBaseUrl(): string {
+  // First try NEXTAUTH_URL which is the canonical setting for Next-Auth
+  let url = process.env.NEXTAUTH_URL;
+  
+  // As a fallback, check for VERCEL environment variables
+  if (!url && process.env.VERCEL_URL) {
+    url = `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // If still no URL, use localhost for development
+  if (!url) {
+    url = "http://localhost:3000";
+  }
+  
   // Ensure we have a valid base URL with protocol
-  const url = process.env.NEXTAUTH_URL || "http://localhost:3000";
   return url.startsWith('http') ? url : `https://${url}`;
 }
 

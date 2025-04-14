@@ -21,6 +21,7 @@ export default function Login() {
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const errorParam = searchParams.get('error');
   const linkEmailParam = searchParams.get('linkEmail');
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
   
   useEffect(() => {
     // Handle direct error parameters
@@ -45,11 +46,12 @@ export default function Login() {
     setError("");
 
     try {
-      // First verify credentials using server action
+      // Use the simplified authentication flow with our server action
       const formData = new FormData();
       formData.append('email', email);
       formData.append('password', password);
       
+      // Use the updated loginUserAction from lib/actions
       const result = await loginUserAction(formData);
       
       if (!result.success) {
@@ -58,22 +60,8 @@ export default function Login() {
         return;
       }
 
-      // If verification succeeded, use signIn directly for session creation
-      const signInResult = await signIn("credentials", {
-        email,
-        password,
-        redirect: false
-      });
-
-      if (signInResult?.error) {
-        setError(signInResult.error || "Authentication failed");
-        setIsLoading(false);
-        return;
-      }
-
       // Check if we need to link a Google account
       if (linkEmailParam && linkEmailParam === email) {
-        console.log("User successfully logged in, now redirecting to Google auth to link account");
         // Redirect to Google auth to link the account
         signIn("google", { 
           callbackUrl: "/dashboard",
@@ -82,12 +70,25 @@ export default function Login() {
         return;
       }
       
-      // Regular successful authentication - redirect to dashboard
-      console.log("Login successful, redirecting to dashboard");
-      router.push("/dashboard");
+      // Sign in using NextAuth with credentials
+      const signInResult = await signIn("credentials", {
+        email,
+        password,
+        callbackUrl: callbackUrl,
+        redirect: false
+      });
+      
+      if (signInResult?.error) {
+        setError(signInResult.error || "Authentication failed");
+        setIsLoading(false);
+        return;
+      }
+      
+      // Redirect to the callback URL or dashboard
+      router.push(callbackUrl);
     } catch (error) {
-      console.error("Login error:", error);
       setError("Something went wrong. Please try again.");
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -100,12 +101,11 @@ export default function Login() {
       
       // Use newer redirect: true option to ensure proper redirection
       await signIn("google", { 
-        callbackUrl: "/dashboard",
+        callbackUrl: callbackUrl,
         redirect: true
       });
       
       // If we get here, it means the redirect didn't happen, which is unexpected
-      console.error("Google signin didn't redirect as expected");
       setError("Failed to sign in with Google. Please try again.");
       setIsLoading(false);
     } catch (error) {

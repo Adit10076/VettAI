@@ -22,6 +22,9 @@ export default function Signup() {
     confirmPassword?: string;
   }>({});
 
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+
   const validateForm = () => {
     const errors: {
       password?: string;
@@ -48,7 +51,6 @@ export default function Signup() {
     setError("");
 
     try {
-      // Register user using server action
       const formData = new FormData();
       formData.append('name', fullName);
       formData.append('email', email);
@@ -61,27 +63,26 @@ export default function Signup() {
         setIsLoading(false);
         return;
       }
-      
-      // If registration successful, sign in to create session
-      console.log("Registration successful, signing in...");
+
+      // Sign in with the new credentials
       const signInResult = await signIn("credentials", {
         email,
         password,
+        callbackUrl: callbackUrl,
         redirect: false
       });
       
       if (signInResult?.error) {
-        setError(signInResult.error || "Registration successful but login failed. Please try logging in.");
+        setError(signInResult.error || "Account created but login failed. Please go to login page.");
         setIsLoading(false);
         return;
       }
       
-      // Redirect to dashboard on successful authentication
-      console.log("Sign-in successful, redirecting to dashboard");
-      router.push("/dashboard");
+      // Redirect to the dashboard or callback URL
+      router.push(callbackUrl);
     } catch (error) {
-      console.error("Registration error:", error);
       setError("Something went wrong. Please try again.");
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -94,12 +95,11 @@ export default function Signup() {
       
       // Use newer redirect: true option to ensure proper redirection
       await signIn("google", { 
-        callbackUrl: "/dashboard",
+        callbackUrl: callbackUrl,
         redirect: true
       });
       
       // If we get here, it means the redirect didn't happen, which is unexpected
-      console.error("Google sign in didn't redirect as expected");
       setError("Failed to sign in with Google. Please try again.");
       setIsLoading(false);
     } catch (error) {

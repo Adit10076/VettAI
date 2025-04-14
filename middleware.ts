@@ -6,12 +6,14 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const searchParams = request.nextUrl.searchParams.toString();
   
-  // Always skip middleware for all API routes and auth-related callbacks
+  // Always skip middleware for all API routes, static files, and auth-related callbacks
   if (path.startsWith("/api/") || 
       path.includes("/callback") || 
       path.includes("/auth") || 
-      searchParams.includes("code=")) {
-    console.log(`Skipping middleware for API/auth route: ${path}`);
+      path.includes("/_next/") ||
+      path.includes("favicon.ico") ||
+      searchParams.includes("code=") ||
+      searchParams.includes("error=")) {
     return NextResponse.next();
   }
 
@@ -21,11 +23,6 @@ export async function middleware(request: NextRequest) {
     path === "/login" || 
     path === "/signup";
 
-  // Don't redirect on the root path
-  if (path === "/") {
-    return NextResponse.next();
-  }
-
   try {
     // Get the session using JWT token - this works in Edge
     const token = await getToken({ 
@@ -34,21 +31,20 @@ export async function middleware(request: NextRequest) {
     });
     
     const isAuthenticated = !!token;
-    console.log(`Middleware: Path ${path}, Authenticated: ${isAuthenticated}, Token:`, 
-      token ? `User: ${token.email || 'unknown'}` : 'None');
-
+    
     // Get the base URL from environment or use the request URL
     const baseUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
 
     // Redirect logic
     if (isPublicPath && isAuthenticated) {
-      console.log(`Redirecting authenticated user from ${path} to /dashboard`);
+      // Redirect authenticated users away from login/signup pages
       return NextResponse.redirect(new URL("/dashboard", baseUrl));
     }
 
     if (!isPublicPath && !isAuthenticated) {
-      console.log(`Redirecting unauthenticated user from ${path} to /login`);
-      return NextResponse.redirect(new URL("/login", baseUrl));
+      // Redirect unauthenticated users away from protected routes
+      const callbackUrl = encodeURIComponent(request.nextUrl.pathname);
+      return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, baseUrl));
     }
 
     return NextResponse.next();
@@ -59,7 +55,7 @@ export async function middleware(request: NextRequest) {
   }
 }
 
-// Only run middleware on matching paths
+// Only run middleware on matching paths, excluding api routes, static files, etc.
 export const config = {
   matcher: [
     /*

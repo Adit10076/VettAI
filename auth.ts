@@ -5,6 +5,28 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 import prisma from "./lib/prisma";
 import { getAuthBaseUrl, getCallbackUrl } from "./lib/auth-config";
+import { JWT } from "next-auth/jwt";
+
+// Extend JWT type to include provider
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string;
+    provider?: string;
+  }
+}
+
+// Extend Session User to include provider
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      provider?: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    }
+  }
+}
 
 // Force NextAuth to run in Node.js mode
 export const runtime = "nodejs";
@@ -92,7 +114,7 @@ export async function verifyCredentials(email: string, password: string) {
 // Function to sign in with Google
 export async function signInWithGoogle() {
   return signIn("google", { 
-    callbackUrl: getCallbackUrl(),
+    callbackUrl: "/dashboard",
     redirect: true
   });
 }
@@ -153,11 +175,7 @@ export const {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("authorize called with credentials:", 
-          credentials ? { email: credentials.email, hasPassword: !!credentials.password } : "no credentials");
-        
         if (!credentials?.email || !credentials.password) {
-          console.log("Missing email or password");
           return null;
         }
 
@@ -166,23 +184,17 @@ export const {
             where: { email: credentials.email as string },
           });
 
-          console.log("User found:", user ? { id: user.id, hasPassword: !!user.hashedPassword } : "not found");
-
           // If no user or no hashed password (for users created via social login)
           if (!user || !user.hashedPassword) {
-            console.log("User not found or no password hash");
             return null;
           }
 
           const passwordMatch = await compare(credentials.password as string, user.hashedPassword);
-          console.log("Password match:", passwordMatch);
 
           if (!passwordMatch) {
-            console.log("Password doesn't match");
             return null;
           }
 
-          console.log("Authentication successful, returning user");
           return {
             id: user.id,
             email: user.email,
@@ -206,42 +218,55 @@ export const {
     error: "/login",
   },
   trustHost: true,
+  debug: process.env.NODE_ENV === "development",
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, account, trigger }) {
+      // Initial sign in
+      if (account && user) {
+        // Add user ID to token
         token.id = user.id;
+        // Add provider information
+        if (account.provider) {
+          token.provider = account.provider;
+        }
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
+        // Add user ID to session
         session.user.id = token.sub!;
+        // Add provider information if available
+        if (token.provider) {
+          session.user.provider = token.provider as string;
+        }
       }
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Custom redirect logic for authentication flows
-      console.log(`NextAuth redirect called. URL: ${url}, baseUrl: ${baseUrl}`);
+      // Always redirect to dashboard after successful authentication
+      if (url.includes("/api/auth/signin") || url.includes("/api/auth/callback")) {
+        return `${baseUrl}/dashboard`;
+      }
       
       // For dashboard redirects, ensure we use the full URL
       if (url.endsWith('/dashboard') || url === '/dashboard') {
-        const fullUrl = `${baseUrl}/dashboard`;
-        console.log(`Redirecting to dashboard: ${fullUrl}`);
-        return fullUrl;
+        return `${baseUrl}/dashboard`;
       }
       
-      // For relative URLs, prepend the base URL
+      // If url is relative, prepend the base URL
       if (url.startsWith("/")) {
-        const fullUrl = `${baseUrl}${url}`;
-        console.log(`Redirecting to: ${fullUrl}`);
-        return fullUrl;
+        return `${baseUrl}${url}`;
       }
       
-      // Default case: return the URL as is
-      console.log(`Using default redirect to: ${url}`);
-      return url;
+      // If url is absolute but within the same site, allow it
+      if (url.startsWith(baseUrl)) {
+        return url;
+      }
+      
+      // Otherwise return to base URL
+      return baseUrl;
     },
-    // Allow signin if the user already exists with same email
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         const existingUser = await prisma.user.findUnique({
@@ -250,15 +275,12 @@ export const {
         });
         
         if (existingUser) {
-          console.log("Existing user found with same email, allowing sign in");
-          
           // Check if Google account is already linked
           const linkedAccount = existingUser.accounts.find(
             (acc: any) => acc.provider === "google"
           );
           
           if (!linkedAccount) {
-            console.log("Linking Google account to existing user");
             // Link the Google account to the existing user
             try {
               await prisma.account.create({
