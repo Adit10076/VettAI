@@ -4,6 +4,7 @@ import Google from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 import prisma from "./lib/prisma";
+import { getAuthBaseUrl, getCallbackUrl } from "./lib/auth-config";
 
 // Force NextAuth to run in Node.js mode
 export const runtime = "nodejs";
@@ -90,8 +91,10 @@ export async function verifyCredentials(email: string, password: string) {
 
 // Function to sign in with Google
 export async function signInWithGoogle() {
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  return signIn("google", { callbackUrl: `${baseUrl}/dashboard` });
+  return signIn("google", { 
+    callbackUrl: getCallbackUrl(),
+    redirect: true
+  });
 }
 
 // Function to sign in with credentials and handle the result
@@ -108,6 +111,7 @@ export async function signInWithCredentials(email: string, password: string) {
     const result = await signIn("credentials", {
       email,
       password,
+      callbackUrl: getCallbackUrl(),
       redirect: false,
     });
 
@@ -201,6 +205,7 @@ export const {
     signOut: "/",
     error: "/login",
   },
+  basePath: "/api/auth",
   trustHost: true,
   callbacks: {
     async jwt({ token, user }) {
@@ -218,7 +223,7 @@ export const {
     },
     async redirect({ url, baseUrl }) {
       // Make sure baseUrl is set correctly
-      baseUrl = process.env.NEXTAUTH_URL || baseUrl;
+      baseUrl = getAuthBaseUrl();
       
       // Allows relative callback URLs
       if (url.startsWith("/")) {

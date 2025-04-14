@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const NEXTAUTH_URL = process.env.NEXTAUTH_URL || 'https://vett-ai.vercel.app';
+
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@prisma/client', '@auth/prisma-adapter'],
   experimental: {
@@ -8,7 +10,8 @@ const nextConfig: NextConfig = {
     },
   },
   env: {
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'https://vett-ai.vercel.app',
+    NEXTAUTH_URL: NEXTAUTH_URL,
+    AUTH_API_URL: `${NEXTAUTH_URL}/api/auth`,
   },
 };
 
