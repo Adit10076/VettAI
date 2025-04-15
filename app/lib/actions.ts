@@ -1,9 +1,6 @@
 'use server';
 
-import { registerUser, verifyCredentials, AuthResult } from "../../auth";
-
-// Define common return types
-// Type is now imported from auth.ts
+import { registerUser, verifyCredentials, signInWithGoogle } from "../../auth";
 
 /**
  * Simplified Server Actions for Authentication
@@ -13,16 +10,14 @@ import { registerUser, verifyCredentials, AuthResult } from "../../auth";
  */
 
 // Server action for user registration
-export async function registerUserAction(formData: FormData): Promise<AuthResult> {
+export async function registerUserAction(formData: FormData) {
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
   try {
-    // Validate inputs
-    if (!name || !email || !password) {
-      return { success: false, message: "All fields are required" };
-    }
+    // Directly call the auth functions instead of using fetch
+    console.log(`Processing registration for ${email}`);
     
     // Call the registerUser function directly
     const result = await registerUser(name, email, password);
@@ -34,31 +29,24 @@ export async function registerUserAction(formData: FormData): Promise<AuthResult
 }
 
 // Server action for credential login
-export async function loginUserAction(formData: FormData): Promise<AuthResult> {
+export async function loginUserAction(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
   try {
-    // Validate inputs
-    if (!email || !password) {
-      return { success: false, message: "Email and password are required" };
-    }
+    // Directly call the auth functions instead of using fetch
+    console.log(`Processing login for ${email}`);
     
-    // First verify the credentials
+    // Call the verifyCredentials function directly
     const result = await verifyCredentials(email, password);
-    
-    if (!result.success) {
-      return result;
-    }
-    
-    // Credentials are valid, return success
-    return { 
-      success: true, 
-      user: result.user,
-      message: "Login successful"
-    };
+    return result;
   } catch (error) {
     console.error("Login error:", error);
     return { success: false, message: "Failed to login" };
   }
+}
+
+// Server action for Google login
+export async function googleLoginAction() {
+  return signInWithGoogle();
 }

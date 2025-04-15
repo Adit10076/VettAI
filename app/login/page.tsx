@@ -1,42 +1,39 @@
 "use client";
 
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import AuthLayout from "../auth-layout";
 import GoogleButton from "../components/GoogleButton";
 import { signIn } from "next-auth/react";
-import { motion } from "framer-motion";
-import { Lock, Mail, AlertCircle, Loader as Spinner } from "lucide-react";
 import { loginUserAction } from "../lib/actions";
 
-export default function Login() {
+// Inner component that uses useSearchParams and holds the login logic.
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-  const errorParam = searchParams.get('error');
-  const linkEmailParam = searchParams.get('linkEmail');
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-  
+  const errorParam = searchParams.get("error");
+  const linkEmailParam = searchParams.get("linkEmail");
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
   useEffect(() => {
-    // Handle direct error parameters
     if (errorParam) {
-      if (errorParam === 'OAuthAccountNotLinked') {
-        setError("An account already exists with the same email address. Please sign in with your credentials.");
+      if (errorParam === "OAuthAccountNotLinked") {
+        setError("An account already exists with this email. Use password login to link.");
       } else {
         setError(`Authentication error: ${errorParam}`);
       }
     }
-    
-    // Pre-fill email from linkEmail parameter
+
     if (linkEmailParam) {
       setEmail(linkEmailParam);
-      setError("Please sign in with your password to link your Google account.");
+      setError("Please login with your password to link your Google account.");
     }
   }, [errorParam, linkEmailParam]);
 
@@ -46,166 +43,148 @@ export default function Login() {
     setError("");
 
     try {
-      // Use the simplified authentication flow with our server action
       const formData = new FormData();
-      formData.append('email', email);
-      formData.append('password', password);
-      
-      // Use the updated loginUserAction from lib/actions
+      formData.append("email", email);
+      formData.append("password", password);
+
       const result = await loginUserAction(formData);
-      
+
       if (!result.success) {
         setError(result.message || "Authentication failed");
         setIsLoading(false);
         return;
       }
 
-      // Check if we need to link a Google account
       if (linkEmailParam && linkEmailParam === email) {
-        // Redirect to Google auth to link the account
-        signIn("google", { 
-          callbackUrl: "/dashboard",
-          redirect: true
-        });
+        await signIn("google", { callbackUrl, redirect: true });
         return;
       }
-      
-      // Sign in using NextAuth with credentials
+
       const signInResult = await signIn("credentials", {
         email,
         password,
-        callbackUrl: callbackUrl,
-        redirect: false
+        callbackUrl,
+        redirect: false,
       });
-      
+
       if (signInResult?.error) {
         setError(signInResult.error || "Authentication failed");
         setIsLoading(false);
         return;
       }
-      
-      // Redirect to the callback URL or dashboard
+
       router.push(callbackUrl);
     } catch (error) {
+      console.error("Login error:", error);
       setError("Something went wrong. Please try again.");
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError("");
     try {
-      setIsLoading(true);
-      setError("");
-      
-      console.log(`Starting Google sign-in, redirecting to: ${callbackUrl}`);
-      
-      // Use newer redirect: true option to ensure proper redirection
-      // Always redirect to dashboard to avoid redirect loops
-      await signIn("google", { 
-        callbackUrl: "/dashboard",
-        redirect: true
+      await signIn("google", {
+        callbackUrl,
+        redirect: true,
       });
-      
-      // If we get here, it means the redirect didn't happen, which is unexpected
-      setError("Failed to sign in with Google. Please try again.");
-      setIsLoading(false);
     } catch (error) {
-      console.error("Google sign in error:", error);
-      setError("Failed to sign in with Google. Please try again.");
+      console.error("Google sign-in error:", error);
+      setError("Failed to sign in with Google. Try again.");
       setIsLoading(false);
     }
   };
 
   return (
-    
-      <AuthLayout title="Welcome Back">
-        <form onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-500/10 border border-red-500 text-red-500 rounded-lg p-3 mb-4 text-sm">
-              {error}
-            </div>
-          )}
-          
-          <div className="input-group">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              className="auth-input"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={isLoading}
-            />
+    <AuthLayout title="Welcome Back">
+      <form onSubmit={handleSubmit}>
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 text-red-500 rounded-lg p-3 mb-4 text-sm">
+            {error}
           </div>
-          
-          <div className="input-group">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              className="auth-input"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-          </div>
-          
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                className="auth-checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                disabled={isLoading}
-              />
-              <label htmlFor="remember-me" className="ml-2 text-sm text-gray-400">
-                Remember me
-              </label>
-            </div>
-            <Link href="/forgot-password" className="text-sm auth-link">
-              Forgot password?
-            </Link>
-          </div>
-          
-          <button 
-            type="submit" 
-            className="auth-button mb-4"
+        )}
+
+        <div className="input-group">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            className="auth-input"
+            placeholder="your@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
             disabled={isLoading}
-          >
-            {isLoading ? "Signing in..." : "Log In"}
-          </button>
-        </form>
-        
-        <div className="divider">
-          <span>OR</span>
-        </div>
-        
-        <div className="mt-4">
-          <GoogleButton 
-            text="Continue with Google" 
-            onClick={handleGoogleLogin} 
           />
         </div>
-        
-        <p className="text-center mt-6 text-gray-400">
-          Don't have an account?{" "}
-          <Link href="/signup" className="auth-link">
-            Sign Up
+
+        <div className="input-group">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            className="auth-input"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+        </div>
+
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <input
+              id="remember-me"
+              type="checkbox"
+              className="auth-checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              disabled={isLoading}
+            />
+            <label htmlFor="remember-me" className="ml-2 text-sm text-gray-400">
+              Remember me
+            </label>
+          </div>
+          <Link href="/forgot-password" className="text-sm auth-link">
+            Forgot password?
           </Link>
-        </p>
-      </AuthLayout>
-    
+        </div>
+
+        <button type="submit" className="auth-button mb-4" disabled={isLoading}>
+          {isLoading ? "Signing in..." : "Log In"}
+        </button>
+      </form>
+
+      <div className="divider">
+        <span>OR</span>
+      </div>
+
+      <div className="mt-4">
+        <GoogleButton text="Continue with Google" onClick={handleGoogleLogin} />
+      </div>
+
+      <p className="text-center mt-6 text-gray-400">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="auth-link">
+          Sign Up
+        </Link>
+      </p>
+    </AuthLayout>
+  );
+}
+
+// Outer component wrapping LoginContent in a Suspense boundary.
+export default function Login() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

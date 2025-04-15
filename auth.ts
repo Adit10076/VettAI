@@ -1,13 +1,16 @@
+// pages/api/auth/[...nextauth].ts
+
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 import prisma from "./lib/prisma";
-import { getAuthBaseUrl, getCallbackUrl } from "./lib/auth-config";
-import { JWT } from "next-auth/jwt";
+// Do not alter these imports if you rely on exporting GET and POST routes.
+// import { getAuthBaseUrl, getCallbackUrl } from "./lib/auth-config";  // Not used in this sample.
+import { signIn as nextAuthSignIn } from "next-auth/react"; // Optional: for client-side usage if needed
 
-// Extend JWT type to include provider
+// Extend JWT type to include provider info
 declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
@@ -15,7 +18,7 @@ declare module "next-auth/jwt" {
   }
 }
 
-// Extend Session User to include provider
+// Extend Session user to include provider info
 declare module "next-auth" {
   interface Session {
     user: {
@@ -24,47 +27,25 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-    }
+    };
   }
 }
-
-// Define common return types for authentication functions
-export type AuthResult = {
-  success: boolean;
-  message?: string;
-  user?: {
-    id: string;
-    name?: string;
-    email?: string;
-  };
-};
 
 // Force NextAuth to run in Node.js mode
 export const runtime = "nodejs";
 
 /**
- * Simplified Authentication API
- * 
- * This file serves as the single source of truth for all authentication operations.
- * It consolidates user registration, credential verification, and sign-in functionality.
+ * Authentication Helper Functions
+ * These functions handle user registration, credentials verification, and optionally trigger sign-in flows.
  */
 
-// Authentication helper functions
-export async function registerUser(name: string, email: string, password: string): Promise<AuthResult> {
+export async function registerUser(name: string, email: string, password: string) {
   try {
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return { success: false, message: "User already exists" };
     }
-
-    // Hash the password
     const hashedPassword = await hash(password, 10);
-
-    // Create the user
     const user = await prisma.user.create({
       data: {
         name,
@@ -72,18 +53,9 @@ export async function registerUser(name: string, email: string, password: string
         hashedPassword,
       },
     });
-
     if (user) {
-      return { 
-        success: true, 
-        user: { 
-          id: user.id, 
-          name: user.name || undefined, 
-          email: user.email 
-        } 
-      };
+      return { success: true, user: { id: user.id, name: user.name, email: user.email } };
     }
-
     return { success: false, message: "Failed to create user" };
   } catch (error) {
     console.error("Registration error:", error);
@@ -91,75 +63,47 @@ export async function registerUser(name: string, email: string, password: string
   }
 }
 
-// Function to verify credentials
-export async function verifyCredentials(email: string, password: string): Promise<AuthResult> {
+export async function verifyCredentials(email: string, password: string) {
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.hashedPassword) {
       return { success: false, message: "Invalid credentials" };
     }
-
     const passwordMatch = await compare(password, user.hashedPassword);
-
     if (!passwordMatch) {
       return { success: false, message: "Invalid credentials" };
     }
-
-    return { 
-      success: true, 
-      user: { 
-        id: user.id,
-        name: user.name || undefined,
-        email: user.email
-      } 
-    };
+    return { success: true, user: { id: user.id, name: user.name, email: user.email } };
   } catch (error) {
     console.error("Verification error:", error);
     return { success: false, message: "Failed to verify credentials" };
   }
 }
 
-// Function to sign in with Google
-export async function signInWithGoogle() {
-  return signIn("google", { 
-    callbackUrl: "/dashboard",
-    redirect: true
-  });
+// Optional helper to trigger Google sign-in (client-side usage; do not alter exports here)
+export function signInWithGoogle() {
+  return nextAuthSignIn("google", { callbackUrl: "/dashboard", redirect: true });
 }
 
-// Function to sign in with credentials and handle the result
-export async function signInWithCredentials(email: string, password: string): Promise<AuthResult> {
-  try {
-    // First verify the credentials
-    const verifyResult = await verifyCredentials(email, password);
-    
-    if (!verifyResult.success) {
-      return verifyResult;
-    }
-    
-    // Then sign in
-    const result = await signIn("credentials", {
-      email,
-      password,
-      callbackUrl: "/dashboard",
-      redirect: false,
-    });
-
-    return { 
-      success: !result?.error,
-      message: result?.error || "Authentication successful",
-      user: verifyResult.user
-    };
-  } catch (error) {
-    console.error("Authentication error:", error);
-    return { success: false, message: "Authentication failed" };
+// Optional helper to trigger credentials sign-in (client-side usage)
+export async function signInWithCredentials(email: string, password: string) {
+  const verifyResult = await verifyCredentials(email, password);
+  if (!verifyResult.success) {
+    return verifyResult;
   }
+  const result = await nextAuthSignIn("credentials", {
+    email,
+    password,
+    callbackUrl: "/dashboard",
+    redirect: false,
+  });
+  return { success: !result?.error, error: result?.error };
 }
 
-// Create auth configuration
+/**
+ * NextAuth API Route Configuration
+ * Do not change the structure of exports below if you're relying on GET and POST routes.
+ */
 export const { 
   handlers: { GET, POST },
   auth,
@@ -176,9 +120,9 @@ export const {
         params: {
           prompt: "consent",
           access_type: "offline",
-          response_type: "code"
-        }
-      }
+          response_type: "code",
+        },
+      },
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -187,34 +131,17 @@ export const {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
-          return null;
-        }
-
+        if (!credentials?.email || !credentials.password) return null;
         try {
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email as string },
-          });
-
-          // If no user or no hashed password (for users created via social login)
-          if (!user || !user.hashedPassword) {
-            return null;
-          }
-
+          // Explicitly cast email to string
+          const email = credentials.email as string;
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (!user || !user.hashedPassword) return null;
           const passwordMatch = await compare(credentials.password as string, user.hashedPassword);
-
-          if (!passwordMatch) {
-            return null;
-          }
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-          };
+          if (!passwordMatch) return null;
+          return { id: user.id, email: user.email, name: user.name, image: user.image || null };
         } catch (error) {
-          console.error("Error in authorize function:", error);
+          console.error("Error in credentials authorize:", error);
           return null;
         }
       },
@@ -232,84 +159,46 @@ export const {
   trustHost: true,
   debug: process.env.NODE_ENV === "development",
   callbacks: {
-    async jwt({ token, user, account, trigger }) {
-      // Initial sign in
+    async jwt({ token, user, account }) {
+      // On first sign-in, store user id and provider info in token.
       if (account && user) {
-        // Add user ID to token
         token.id = user.id;
-        // Add provider information
-        if (account.provider) {
-          token.provider = account.provider;
-        }
+        if (account.provider) token.provider = account.provider;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        // Add user ID to session
-        session.user.id = token.sub!;
-        // Add provider information if available
-        if (token.provider) {
-          session.user.provider = token.provider as string;
-        }
+        session.user.id = token.sub || "";
+        if (token.provider) session.user.provider = token.provider as string;
       }
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Handle Google OAuth callback specifically
-      if (url.includes("/api/auth/callback/google")) {
-        console.log("Google OAuth callback detected, redirecting to dashboard");
-        return `${baseUrl}/dashboard`;
-      }
-      
-      // Always redirect to dashboard after any authentication
       if (url.includes("/api/auth/signin") || url.includes("/api/auth/callback")) {
-        console.log("Auth callback detected, redirecting to dashboard");
         return `${baseUrl}/dashboard`;
       }
-      
-      // For dashboard redirects, ensure we use the full URL
-      if (url.endsWith('/dashboard') || url === '/dashboard') {
-        console.log("Dashboard URL detected, using full URL");
+      if (url.endsWith("/dashboard") || url === "/dashboard") {
         return `${baseUrl}/dashboard`;
       }
-      
-      // If url is relative, prepend the base URL
       if (url.startsWith("/")) {
-        console.log(`Handling relative URL: ${url}`);
         return `${baseUrl}${url}`;
       }
-      
-      // If url is absolute but within the same site, allow it
       if (url.startsWith(baseUrl)) {
-        console.log(`Allowing same-site URL: ${url}`);
         return url;
       }
-      
-      // Otherwise return to base URL
-      console.log(`Fallback to base URL: ${baseUrl}`);
       return baseUrl;
     },
-    async signIn({ user, account, profile }) {
-      if (account?.provider === "google") {
-        console.log(`Google sign-in attempt for ${user.email}`);
-        
+    async signIn({ user, account }) {
+      // For Google sign-in, link account if an existing user is found.
+      if (account?.provider === "google" && user.email) {
         const existingUser = await prisma.user.findUnique({
-          where: { email: user.email! },
-          include: { accounts: true }
+          where: { email: user.email },
+          include: { accounts: true },
         });
-        
         if (existingUser) {
-          console.log(`Existing user found with email ${user.email}`);
-          
-          // Check if Google account is already linked
-          const linkedAccount = existingUser.accounts.find(
-            (acc: any) => acc.provider === "google"
-          );
-          
+          const linkedAccount = existingUser.accounts.find((acc: any) => acc.provider === "google");
           if (!linkedAccount) {
-            console.log(`Linking Google account to existing user ID: ${existingUser.id}`);
-            // Link the Google account to the existing user
             try {
               await prisma.account.create({
                 data: {
@@ -323,25 +212,17 @@ export const {
                   token_type: account.token_type,
                   scope: account.scope?.toString(),
                   id_token: account.id_token?.toString(),
-                  session_state: account.session_state?.toString()
-                }
+                  session_state: account.session_state?.toString(),
+                },
               });
-              console.log("Successfully linked Google account");
             } catch (error) {
               console.error("Error linking Google account:", error);
-              // Allow sign in anyway
+              // Allow sign in even if linking fails.
             }
-          } else {
-            console.log("Google account already linked, proceeding with sign in");
           }
-          
-          // Return true to allow sign in with the existing user
-          return true;
-        } else {
-          console.log(`No existing user found, creating new user for ${user.email}`);
         }
       }
       return true;
-    }
-  }
+    },
+  },
 });

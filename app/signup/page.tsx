@@ -22,9 +22,6 @@ export default function Signup() {
     confirmPassword?: string;
   }>({});
 
-  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-
   const validateForm = () => {
     const errors: {
       password?: string;
@@ -58,28 +55,16 @@ export default function Signup() {
       
       const result = await registerUserAction(formData);
       
-      if (!result.success) {
+      if (result.success) {
+        await signIn("credentials", {
+          email,
+          password,
+          callbackUrl: "/dashboard",
+          redirect: true
+        });
+      } else {
         setError(result.message || "Registration failed");
-        setIsLoading(false);
-        return;
       }
-
-      // Sign in with the new credentials
-      const signInResult = await signIn("credentials", {
-        email,
-        password,
-        callbackUrl: callbackUrl,
-        redirect: false
-      });
-      
-      if (signInResult?.error) {
-        setError(signInResult.error || "Account created but login failed. Please go to login page.");
-        setIsLoading(false);
-        return;
-      }
-      
-      // Redirect to the dashboard or callback URL
-      router.push(callbackUrl);
     } catch (error) {
       setError("Something went wrong. Please try again.");
       console.error(error);
@@ -93,16 +78,14 @@ export default function Signup() {
       setIsLoading(true);
       setError("");
       
-      console.log(`Starting Google sign-up, redirecting to dashboard`);
-      
       // Use newer redirect: true option to ensure proper redirection
-      // Always redirect to dashboard to avoid redirect loops
       await signIn("google", { 
         callbackUrl: "/dashboard",
         redirect: true
       });
       
       // If we get here, it means the redirect didn't happen, which is unexpected
+      console.error("Google sign in didn't redirect as expected");
       setError("Failed to sign in with Google. Please try again.");
       setIsLoading(false);
     } catch (error) {
