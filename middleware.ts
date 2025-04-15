@@ -3,68 +3,59 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
-  const searchParamsStr = request.nextUrl.searchParams.toString();
+  const { pathname, searchParams } = request.nextUrl;
+  const searchParamsStr = searchParams.toString();
+  const isApiRoute = pathname.startsWith("/api");
+  const baseUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
 
-  // Skip middleware for API routes, auth callbacks, or if the URL includes an OAuth code.
+  // Bypass middleware for critical paths
   if (
-    path.startsWith("/api/") ||
-    path.includes("/callback") ||
-    path.includes("/auth") ||
-    searchParamsStr.includes("code=")
+    isApiRoute ||
+    pathname.includes("/_next") ||
+    pathname.includes("/static") ||
+    pathname.includes("/favicon.ico") ||
+    searchParamsStr.includes("callbackUrl=") ||
+    searchParamsStr.includes("error=")
   ) {
-    console.log(`Skipping middleware for API/auth route: ${path}`);
     return NextResponse.next();
   }
 
-  // Define which paths are public (accessible without authentication).
-  const isPublicPath =
-    path === "/" ||
-    path === "/login" ||
-    path === "/signup";
-
-  // Do not redirect on the root path.
-  if (path === "/") {
-    return NextResponse.next();
-  }
+  // Public routes configuration
+  const publicRoutes = new Set([
+    "/",
+    "/login",
+    "/signup",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-email"
+  ]);
 
   try {
-    // Retrieve the JWT token; works at the Edge.
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
     const isAuthenticated = !!token;
-    console.log(
-      `Middleware: Path ${path}, Authenticated: ${isAuthenticated}, Token:`,
-      token ? `User: ${token.email || 'unknown'}` : 'None'
-    );
-
-    const baseUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
-
-    // Redirect authenticated users from public pages to the dashboard.
-    if (isPublicPath && isAuthenticated) {
-      console.log(`Redirecting authenticated user from ${path} to /dashboard`);
+    
+    // Redirect authenticated users from auth pages to dashboard
+    if (publicRoutes.has(pathname) && isAuthenticated) {
       return NextResponse.redirect(new URL("/dashboard", baseUrl));
     }
 
-    // Redirect unauthenticated users trying to access protected pages to the login page.
-    if (!isPublicPath && !isAuthenticated) {
-      console.log(`Redirecting unauthenticated user from ${path} to /login`);
-      return NextResponse.redirect(new URL("/login", baseUrl));
+    // Protect private routes
+    if (!publicRoutes.has(pathname) && !isAuthenticated) {
+      const loginUrl = new URL("/login", baseUrl);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
     }
 
     return NextResponse.next();
   } catch (error) {
-    console.error("Middleware error:", error);
-    // In case of error, allow request to proceed to avoid blocking users.
-    return NextResponse.next();
+    console.error("Middleware Error:", error);
+    // Fallback to error page or maintain current path
+    return NextResponse.redirect(new URL("/error", baseUrl));
   }
 }
 
-// Run this middleware on all paths except for API routes, static files, images, and favicon.
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|sw.js|site.webmanifest|robots.txt).*)",
   ],
 };

@@ -20,7 +20,7 @@ function LoginContent() {
 
   const errorParam = searchParams.get("error");
   const linkEmailParam = searchParams.get("linkEmail");
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const callbackUrl = "/dashboard";
 
   useEffect(() => {
     if (errorParam) {

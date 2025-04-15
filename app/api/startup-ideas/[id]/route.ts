@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 import prisma from "@/lib/prisma";
 
 // GET /api/startup-ideas/[id]
@@ -7,7 +8,7 @@ export async function GET(req: NextRequest, context: any) {
   const ideaId = context.params.id;
 
   try {
-    const session = await auth();
+    const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
       return NextResponse.json(
@@ -54,7 +55,7 @@ export async function DELETE(req: NextRequest, context: any) {
   const ideaId = context.params.id;
 
   try {
-    const session = await auth();
+    const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
       return NextResponse.json(

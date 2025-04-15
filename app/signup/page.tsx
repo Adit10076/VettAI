@@ -52,23 +52,35 @@ export default function Signup() {
       formData.append('name', fullName);
       formData.append('email', email);
       formData.append('password', password);
+      formData.append('confirmPassword', confirmPassword);
       
       const result = await registerUserAction(formData);
       
-      if (result.success) {
-        await signIn("credentials", {
-          email,
-          password,
-          callbackUrl: "/dashboard",
-          redirect: true
-        });
-      } else {
+      if (!result.success) {
         setError(result.message || "Registration failed");
+        setIsLoading(false);
+        return;
       }
+      
+      // Registration successful, now sign in
+      const signInResult = await signIn("credentials", {
+        email,
+        password,
+        callbackUrl: "/dashboard",
+        redirect: false
+      });
+      
+      if (signInResult?.error) {
+        setError(signInResult.error || "Authentication failed");
+        setIsLoading(false);
+        return;
+      }
+      
+      // Redirect to dashboard
+      router.push("/dashboard");
     } catch (error) {
       setError("Something went wrong. Please try again.");
       console.error(error);
-    } finally {
       setIsLoading(false);
     }
   };
