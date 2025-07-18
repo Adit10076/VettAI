@@ -201,6 +201,8 @@ export default function Dashboard() {
           <p>© 2023 VettAI. All rights reserved.</p>
         </div>
       </footer>
+      <script id="omnidimension-web-widget" async src="https://backend.omnidim.io/web_widget.js?secret_key=d07cf745d626565970d4e34bc2311e79" ></script>
+
     </div>
   );
 } 
