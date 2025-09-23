@@ -13,7 +13,7 @@ load_dotenv()
 app = FastAPI()
 
 # CORS
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+frontend_url = os.getenv("FRONTEND_URL", "https://vett-ai.vercel.app/")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[frontend_url],
